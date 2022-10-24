@@ -26,7 +26,7 @@ const Header = () => {
 
   return (
     <Box>
-      <AppBar position="static" sx={{ height: 200 }}>
+      <AppBar position="static" sx={{ height: "64px" }}>
         <Container>
           <Toolbar>
             <Typography sx={{ marginLeft: 3 }} variant="h5">

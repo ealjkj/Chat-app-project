@@ -1,0 +1,70 @@
+[
+    {
+      "title": "Luis Ballote",
+      "message": "You are the best",
+      "avatars": ["/avatars/luis.jpg"],
+      "id": "0"
+    },
+
+    {
+        "title": "Adriana Tamayo",
+        "message": "I love you",
+        "avatars": ["/avatars/adri.jpg"],
+        "id": "1"
+      },
+
+      {
+        "title": "Cesar",
+        "message": "Did I tell you that you are the best",
+        "avatars": ["/avatars/cesar.jpg"],
+        "id": "2"
+      },
+
+      {
+        "title": "A great Group",
+        "message": "Luis: Cesar says you are the best",
+        "avatars": ["/avatars/luis.jpg", "/avatars/cesar.jpg"],
+        "id": "3"
+      },
+      {
+        "title": "Adriana Tamayo",
+        "message": "I love you",
+        "avatars": ["/avatars/adri.jpg"],
+        "id": "4"
+      },
+
+      {
+        "title": "Cesar",
+        "message": "Did I tell you that you are the best",
+        "avatars": ["/avatars/cesar.jpg"],
+        "id": "5"
+      },
+
+      {
+        "title": "A great Group",
+        "message": "Luis: Cesar says you are the best",
+        "avatars": ["/avatars/luis.jpg", "/avatars/cesar.jpg"],
+        "id": "6"
+      },
+      {
+        "title": "Adriana Tamayo",
+        "message": "I love you",
+        "avatars": ["/avatars/adri.jpg"],
+        "id": "7"
+      },
+
+      {
+        "title": "Cesar",
+        "message": "Did I tell you that you are the best",
+        "avatars": ["/avatars/cesar.jpg"],
+        "id": "8"
+      },
+
+      {
+        "title": "A great Group",
+        "message": "Luis: Cesar says you are the best",
+        "avatars": ["/avatars/luis.jpg", "/avatars/cesar.jpg"],
+        "id": "9"
+      }
+
+  ]

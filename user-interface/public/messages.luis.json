@@ -1,0 +1,76 @@
+[
+
+    {
+    "from": "luis",
+    "content": "Is this an example of conversation?",
+    "type": "text",
+    "createdAt": "2013-10-21T13:28:06.419Z",
+    "id": "0"},
+    
+    
+    {
+    "from": "me",
+    "content": "Sure",
+    "type": "text",
+    "createdAt": "2013-10-21T13:28:06.419Z",
+    "id": "1"},
+    
+    {
+    "from": "me",
+    "content": "It is a good way to know how to handle long pieces of text. It is probably an overkill on terms of creativity because i could just have used a lorem ipsum however is spelled.\nI also have a new paragraph (I think) because i'm not really sure how this is going to work. Definetelly I will need some alignment, and also some of magic to make it work. Now I'm probably just writing random words in orrder to make the text longer. I have been writing for so long, I don't even know if everything here makes sense",
+    "type": "text",
+    "createdAt": "2013-10-21T13:28:06.419Z",
+    "id": "2"},
+    
+    {
+    "from": "luis",
+    "content": "I see",
+    "type": "text",
+    "createdAt": "2013-10-21T13:28:06.419Z",
+    "id": "3"},
+    
+    {
+    "from": "luis",
+    "content": "Should I do de same? I mean, if you are dealing with alignment, maybe you have to test it on both sides. Because my messages should appear at the left of the section, and your messages should do the oposite.\n Also, making very large text could cause trouble for many chat applications, therefore I immagine there is certain ammount of text you can send. Right? you could limit the ammount of memory that can be sent on a single message, or maybe the ammount of characters. I mean, I'm just giving you Ideas. I'm not even you real brother, I'm just an abstraction you created in order to test your application.",
+    "type": "text",
+    "createdAt": "2013-10-21T13:28:06.419Z",
+    "id": "4"}, 
+    
+    {
+    "from": "luis",
+    "content": "Is this an example of conversation?",
+    "type": "text",
+    "createdAt": "2013-10-21T13:28:06.419Z",
+    "id": "5"},
+    
+        
+    {
+    "from": "me",
+    "content": "Sure",
+    "type": "text",
+    "createdAt": "2013-10-21T13:28:06.419Z",
+    "id": "6"},
+        
+    {
+    "from": "me",
+    "content": "It is a good way to know how to handle long pieces of text. It is probably an overkill on terms of creativity because i could just have used a lorem ipsum however is spelled.\nI also have a new paragraph (I think) because i'm not really sure how this is going to work. Definetelly I will need some alignment, and also some of magic to make it work. Now I'm probably just writing random words in orrder to make the text longer. I have been writing for so long, I don't even know if everything here makes sense",
+    "type": "text",
+    "createdAt": "2013-10-21T13:28:06.419Z",
+    "id": "7"},
+    
+    {
+    "from": "luis",
+    "content": "I see",
+    "type": "text",
+    "createdAt": "2013-10-21T13:28:06.419Z",
+    "id": "8"},
+    
+    {
+    "from": "luis",
+    "content": "Should I do de same? I mean, if you are dealing with alignment, maybe you have to test it on both sides. Because my messages should appear at the left of the section, and your messages should do the oposite.\n Also, making very large text could cause trouble for many chat applications, therefore I immagine there is certain ammount of text you can send. Right? you could limit the ammount of memory that can be sent on a single message, or maybe the ammount of characters. I mean, I'm just giving you Ideas. I'm not even you real brother, I'm just an abstraction you created in order to test your application.",
+    "type": "text",
+    "createdAt": "2013-10-21T13:28:06.419Z",
+    "id": "9"}
+    
+
+]

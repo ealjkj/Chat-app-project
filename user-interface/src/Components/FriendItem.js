@@ -14,7 +14,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 const FriendItem = ({ friend }) => {
   return (
-    <Box key={friend.username}>
+    <Box>
       <ListItem>
         <ListItemAvatar>
           <Avatar src={friend.avatar} />

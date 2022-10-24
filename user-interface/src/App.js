@@ -11,7 +11,7 @@ import { Box, Stack } from "@mui/material";
 const User = () => {
   return (
     <>
-      <Stack sx={{ backgroundColor: "aquamarine", height: "100vh" }}>
+      <Stack sx={{ height: "100vh" }}>
         <Header></Header>
         <Outlet />
       </Stack>
