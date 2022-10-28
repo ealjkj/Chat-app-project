@@ -22,7 +22,11 @@ const LinkBehavior = forwardRef((props, ref) => {
 });
 
 const Header = () => {
-  const pages = ["Home", "Contacts", "Dashboard"];
+  const pages = [
+    { title: "Dashboard", link: "/user/dashboard" },
+    { title: "Conversations", link: "/user/conversation/1" },
+    { title: "Contacts", link: "/user/contacts" },
+  ];
 
   return (
     <Box>
@@ -37,10 +41,12 @@ const Header = () => {
                 return (
                   <Button
                     variant="primary"
+                    component={RouterLink}
                     sx={{ marginLeft: "1rem" }}
-                    key={page}
+                    key={page.title}
+                    to={page.link}
                   >
-                    {page}
+                    {page.title}
                   </Button>
                 );
               })}

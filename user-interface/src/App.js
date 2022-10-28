@@ -3,10 +3,18 @@ import Dashboard from "./Components/Dashboard";
 import Conversation from "./Components/Conversation";
 import Login from "./Components/Login";
 import Signup from "./Components/Signup";
+import ContactsPage from "./Components/Contacts";
 import "./App.css";
 
-import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Outlet,
+  Navigate,
+} from "react-router-dom";
 import { Box, Stack } from "@mui/material";
+import { Contacts } from "@mui/icons-material";
 
 const User = () => {
   return (
@@ -19,18 +27,36 @@ const User = () => {
   );
 };
 
+const loggedIn = false;
 function App() {
   return (
     <Box>
       <BrowserRouter>
         <Routes>
+          <Route path="user" element={<Navigate to="/user/dashboard" />} />
+
           <Route path="user" element={<User />}>
             <Route path="dashboard" element={<Dashboard />} />
-            <Route path=":conversationId" element={<Conversation />} />
+            <Route
+              path="conversation/:conversationId"
+              element={<Conversation />}
+            />
+            <Route path="contacts" element={<ContactsPage />} />
           </Route>
 
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<Signup />} />
+          <Route
+            exact
+            path="*"
+            element={
+              loggedIn ? (
+                <Navigate to="user/dashboard" />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
         </Routes>
       </BrowserRouter>
     </Box>

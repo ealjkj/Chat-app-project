@@ -1,7 +1,8 @@
 import { Stack, Typography, List } from "@mui/material";
 import MessageItem from "./MessageItem";
 import TypingArea from "./TypingArea";
-const MessagesSection = ({ messages }) => {
+
+const MessagesSection = ({ messagesList }) => {
   return (
     <Stack sx={{ paddingX: 5 }}>
       <List
@@ -13,8 +14,8 @@ const MessagesSection = ({ messages }) => {
           overflowY: "scroll",
         }}
       >
-        {messages.map((message) => (
-          <MessageItem message={message} key={message.id} />
+        {messagesList.map((message, index) => (
+          <MessageItem message={message} key={index} />
         ))}
       </List>
       <TypingArea />
