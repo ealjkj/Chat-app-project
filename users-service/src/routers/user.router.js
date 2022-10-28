@@ -16,6 +16,19 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+router.get("/", async (req, res) => {
+  const { username } = req.query;
+  try {
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).send({ message: "User not Found" });
+    }
+    res.send(user);
+  } catch (error) {
+    return res.status(500).send({ message: "Server Error" });
+  }
+});
+
 router.post("/create", async (req, res) => {
   try {
     const user = await User.create({

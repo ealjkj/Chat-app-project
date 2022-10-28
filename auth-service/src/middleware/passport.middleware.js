@@ -11,7 +11,7 @@ passport.use(
   "signup",
   new LocalStrategy(async (username, password, done) => {
     try {
-      const user = User.create({ username, password });
+      const user = await User.create({ username, password });
       return done(null, user);
     } catch (error) {
       return done(error);
@@ -30,11 +30,9 @@ passport.use(
       const isValid = await user.isValidPassword(password);
 
       if (!isValid) {
-        console.log("not valid password in middleware");
         return done(null, false);
       }
 
-      console.log("middleware finished grasefully");
       return done(null, user);
     } catch (error) {
       return done(error);

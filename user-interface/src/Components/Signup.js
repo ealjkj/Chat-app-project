@@ -7,19 +7,49 @@ import {
   Stack,
 } from "@mui/material";
 import { useState } from "react";
+import { gql, useMutation } from "@apollo/client";
+import { Navigate } from "react-router-dom";
+
+const CREATE_USER = gql`
+  mutation ($userInput: UserInput) {
+    createUser(userInput: $userInput) {
+      success
+      errorMessage
+    }
+  }
+`;
 
 const Signup = () => {
+  const [signUpError, setSignUpError] = useState(null);
+  const [signUpSuccess, setSignUpSuccess] = useState(false);
+
+  const [createUser] = useMutation(CREATE_USER, {
+    onCompleted: ({ createUser }) => {
+      setSignUpSuccess(createUser.success);
+      setSignUpError(createUser.errorMessage);
+    },
+  });
+
   const [inputs, setInputs] = useState({
     firstName: "",
     lastName: "",
     username: "",
     password: "",
-    password2: "",
+    passwordConfirm: "",
     email: "",
   });
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(inputs);
+
+    const variables = {
+      userInput: {
+        ...inputs,
+      },
+    };
+
+    createUser({
+      variables,
+    });
   };
 
   const handleChange = (event) => {
@@ -83,7 +113,7 @@ const Signup = () => {
           <TextField
             variant="outlined"
             label="Confirm Password"
-            name="password2"
+            name="passwordConfirm"
             type="password"
             required
             onChange={handleChange}
@@ -102,6 +132,12 @@ const Signup = () => {
             {" "}
             Create Account{" "}
           </Button>
+
+          {signUpError || !signUpSuccess ? (
+            <Typography> {signUpError}</Typography>
+          ) : (
+            <Navigate to="/login" />
+          )}
         </Stack>
       </Paper>
     </Box>

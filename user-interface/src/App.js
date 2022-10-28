@@ -14,7 +14,8 @@ import {
   Navigate,
 } from "react-router-dom";
 import { Box, Stack } from "@mui/material";
-import { Contacts } from "@mui/icons-material";
+import { Provider } from "react-redux";
+import store from "./store";
 
 const User = () => {
   return (
@@ -30,36 +31,38 @@ const User = () => {
 const loggedIn = false;
 function App() {
   return (
-    <Box>
-      <BrowserRouter>
-        <Routes>
-          <Route path="user" element={<Navigate to="/user/dashboard" />} />
+    <Provider store={store}>
+      <Box>
+        <BrowserRouter>
+          <Routes>
+            <Route path="user" element={<Navigate to="/user/dashboard" />} />
 
-          <Route path="user" element={<User />}>
-            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="user" element={<User />}>
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route
+                path="conversation/:conversationId"
+                element={<Conversation />}
+              />
+              <Route path="contacts" element={<ContactsPage />} />
+            </Route>
+
+            <Route path="login" element={<Login />} />
+            <Route path="signup" element={<Signup />} />
             <Route
-              path="conversation/:conversationId"
-              element={<Conversation />}
+              exact
+              path="*"
+              element={
+                loggedIn ? (
+                  <Navigate to="user/dashboard" />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
             />
-            <Route path="contacts" element={<ContactsPage />} />
-          </Route>
-
-          <Route path="login" element={<Login />} />
-          <Route path="signup" element={<Signup />} />
-          <Route
-            exact
-            path="*"
-            element={
-              loggedIn ? (
-                <Navigate to="user/dashboard" />
-              ) : (
-                <Navigate to="/login" />
-              )
-            }
-          />
-        </Routes>
-      </BrowserRouter>
-    </Box>
+          </Routes>
+        </BrowserRouter>
+      </Box>
+    </Provider>
   );
 }
 

@@ -1,0 +1,50 @@
+type Message {
+  text: String
+  from: String
+}
+
+input MessageInput {
+  text: String
+  from: String
+}
+
+type User {
+  _id: ID
+  username: String
+  firstName: String
+  lastName: String
+  password: String
+  passwordConfirm: String
+  email: String
+  friends: [ID]
+  conversations: [ID]
+  token: String
+}
+
+type Response {
+  success: Boolean
+  errorMessage: String
+}
+
+input UserInput {
+  username: String!
+  firstName: String
+  lastName: String
+  password: String!
+  passwordConfirm: String
+  email: String
+}
+
+type Mutation {
+  login(userInput: UserInput): User!
+  createUser(userInput: UserInput): Response!
+  createMessage(messageInput: MessageInput): Message!
+}
+
+type Query {
+  messages: [Message]
+}
+
+type Subscription {
+  messageCreated: Message
+}
