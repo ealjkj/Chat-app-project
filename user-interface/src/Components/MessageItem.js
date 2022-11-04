@@ -1,8 +1,11 @@
 import { Box, ListItem, ListItemText } from "@mui/material";
+import { useSelector } from "react-redux";
 
 const MessageItem = ({ message }) => {
-  const color = message.from === "me" ? "#999" : "#eee";
-  const align = message.from === "me" ? "flex-end" : "flex-start";
+  const userId = useSelector((state) => state.user._id);
+
+  const color = message.from === userId ? "#999" : "#eee";
+  const align = message.from === userId ? "flex-end" : "flex-start";
   return (
     <Box sx={{ maxWidth: "70%", width: "max-content", alignSelf: align }}>
       <ListItem sx={{ padding: 0 }}>

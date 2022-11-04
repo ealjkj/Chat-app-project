@@ -5,5 +5,5 @@ mongoose
     useNewUrlParser: true,
   })
   .then(() => {
-    console.log("auth-db connected");
+    console.log("users-db connected");
   });

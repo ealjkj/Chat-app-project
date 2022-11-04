@@ -18,11 +18,19 @@ const ConversationSchema = new Schema({
     type: String,
     trim: true,
   },
-  oneOnOne: {
+  isOneOnOne: {
     type: Boolean,
     default: true,
   },
+  message: String,
   members: [MemberSchema],
+});
+
+ConversationSchema.pre("save", function (next) {
+  if (this.isOneOnOne && this.title) {
+    throw new Error("One on One conversations cannot have title");
+  }
+  next();
 });
 
 ConversationSchema.pre("remove", function (next) {

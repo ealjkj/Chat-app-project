@@ -27,6 +27,7 @@ const UserSchema = new Schema({
       validator: (email) => validator.isEmail(email),
     },
   },
+  avatar: String,
   friends: [String],
   conversations: [String],
 });

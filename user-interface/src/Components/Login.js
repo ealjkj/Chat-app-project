@@ -9,11 +9,12 @@ import {
   Link,
 } from "@mui/material";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-import { Link as RouterLinK } from "react-router-dom";
+import { Link as RouterLinK, Navigate } from "react-router-dom";
 
 const Login = () => {
+  const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   const [inputs, setInputs] = useState({
@@ -38,6 +39,8 @@ const Login = () => {
       },
     });
   };
+
+  if (user) return <Navigate to="/user/dashboard" />;
 
   return (
     <Box

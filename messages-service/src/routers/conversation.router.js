@@ -32,9 +32,10 @@ router.get("/ofUser/:userId", async (req, res) => {
 router.post("/create", async (req, res) => {
   try {
     const conversation = await Conversation.create(req.body);
-    res.send(conversation);
+    console.log(conversation);
+    return res.send(conversation);
   } catch (error) {
-    res.status(500).send(error.message);
+    return res.status(500).send(error.message);
   }
 });
 

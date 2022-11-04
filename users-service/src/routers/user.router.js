@@ -16,6 +16,19 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+router.get("/fromArray/:ids", async (req, res) => {
+  const { ids } = req.params;
+  try {
+    const users = await User.find({ $in: ids.split(",") });
+    if (!users) {
+      return res.status(404).send({ message: "User not Found" });
+    }
+    res.send(users);
+  } catch (error) {
+    return res.status(500).send({ message: "Server Error" });
+  }
+});
+
 router.get("/", async (req, res) => {
   const { username } = req.query;
   try {
@@ -36,6 +49,7 @@ router.post("/create", async (req, res) => {
       friends: [],
       conversations: [],
     });
+    console.log(user);
     res.send(user);
   } catch (error) {
     res.status(500).send(error.message);
@@ -91,18 +105,20 @@ router.post("/connect", async (req, res) => {
       return res.status(404).send({ message: "User 2 not Found" });
     }
 
-    if (user2.friends.includes(id1))
-      return res.send({ message: "Already Friends" });
+    if (user2.friends.includes(id1)) {
+      console.log("already friends");
+      return res.status(200).send({ message: "Already Friends" });
+    }
 
     user1.friends.push(id2);
     user2.friends.push(id1);
 
-    user1.save();
-    user2.save();
+    await user1.save();
+    await user2.save();
 
-    res.send({ id1: user1.friends, id2: user2.friends });
+    return res.send({ id1: user1.friends, id2: user2.friends });
   } catch (error) {
-    res.status(500).send({ message: "Server Error" });
+    return res.status(500).send({ message: "Server Error" });
   }
 });
 
@@ -135,6 +151,20 @@ router.post("/unfriend", async (req, res) => {
     res.send({ id1: user1.friends, id2: user2.friends });
   } catch (error) {
     res.status(500).send({ message: "Server Error" });
+  }
+});
+
+router.get("/friends/:userId", async (req, res) => {
+  const { userId } = req.params;
+  console.log(userId);
+  try {
+    const friends = await User.find({
+      friends: { $elemMatch: { $eq: userId } },
+    });
+
+    res.send(friends);
+  } catch (error) {
+    return res.status(500).send({ message: "Server Error" });
   }
 });
 

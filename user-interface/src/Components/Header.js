@@ -8,20 +8,12 @@ import {
   Tooltip,
   IconButton,
   Avatar,
-  LinkProps,
 } from "@mui/material";
-import {
-  Link as RouterLink,
-  LinkProps as RouterLinkProps,
-} from "react-router-dom";
-import { forwardRef } from "react";
-
-const LinkBehavior = forwardRef((props, ref) => {
-  const { href, ...other } = props;
-  return <RouterLink ref={ref} to={href} {...other} />;
-});
+import { useSelector } from "react-redux";
+import { Link as RouterLink } from "react-router-dom";
 
 const Header = () => {
+  const avatarUrl = useSelector((state) => state.user?.avatar || "");
   const pages = [
     { title: "Dashboard", link: "/user/dashboard" },
     { title: "Conversations", link: "/user/conversation/1" },
@@ -54,7 +46,7 @@ const Header = () => {
 
             <Tooltip title="Settings">
               <IconButton>
-                <Avatar src="/avatars/jorge.jpg" />
+                <Avatar src={avatarUrl} />
               </IconButton>
             </Tooltip>
           </Toolbar>

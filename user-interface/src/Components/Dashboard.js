@@ -2,6 +2,7 @@ import { Grid } from "@mui/material";
 import UserInfo from "./UserInfo";
 import FriendsList from "./FriendsList";
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 
 const emptyUser = {
   username: "ealjkj",
@@ -14,15 +15,7 @@ const emptyUser = {
 };
 
 const Dashboard = () => {
-  const [user, setUser] = useState(emptyUser);
-
-  useEffect(() => {
-    fetch("../profile.json")
-      .then((response) => response.json())
-      .then((data) => {
-        return setUser(data);
-      });
-  }, []);
+  const user = useSelector((state) => state.user);
 
   return (
     <Grid container spacing={2} sx={{ paddingTop: 4 }}>

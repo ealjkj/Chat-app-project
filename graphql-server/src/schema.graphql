@@ -1,29 +1,41 @@
 type Message {
   text: String
   from: String
+  conversationId: ID
 }
 
 input MessageInput {
+  from: ID
   text: String
-  from: String
+  conversationId: ID
 }
 
 type User {
   _id: ID
-  username: String
+  username: String!
   firstName: String
   lastName: String
-  password: String
+  password: String!
   passwordConfirm: String
   email: String
   friends: [ID]
   conversations: [ID]
   token: String
+  description: String
+  avatar: String
 }
 
 type Response {
   success: Boolean
   errorMessage: String
+}
+
+type Conversation {
+  _id: ID
+  title: String
+  members: [User]
+  avatars: [String]
+  message: String
 }
 
 input UserInput {
@@ -33,16 +45,25 @@ input UserInput {
   password: String!
   passwordConfirm: String
   email: String
+  description: String
+  avatar: String
+}
+
+input FriendshipInput {
+  myId: ID!
+  friendId: ID!
 }
 
 type Mutation {
   login(userInput: UserInput): User!
   createUser(userInput: UserInput): Response!
   createMessage(messageInput: MessageInput): Message!
+  acceptFriend(friendshipInput: FriendshipInput): ID
 }
 
 type Query {
-  messages: [Message]
+  friends(userId: ID): [User]
+  conversations(userId: ID): [Conversation]
 }
 
 type Subscription {

@@ -1,5 +1,7 @@
 import { combineReducers } from "redux";
-import chat from "./chat.reducer";
+import messages from "./messages.reducer";
 import user from "./user.reducer";
+import conversations from "./conversations.reducer";
+import friends from "./friends.reducer";
 
-export default combineReducers({ chat, user });
+export default combineReducers({ messages, user, conversations, friends });

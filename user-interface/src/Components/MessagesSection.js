@@ -1,8 +1,10 @@
-import { Stack, Typography, List } from "@mui/material";
+import { Stack, List } from "@mui/material";
+import { useSelector } from "react-redux";
 import MessageItem from "./MessageItem";
 import TypingArea from "./TypingArea";
 
-const MessagesSection = ({ messagesList }) => {
+const MessagesSection = () => {
+  const messages = useSelector((state) => state.messages);
   return (
     <Stack sx={{ paddingX: 5 }}>
       <List
@@ -14,7 +16,7 @@ const MessagesSection = ({ messagesList }) => {
           overflowY: "scroll",
         }}
       >
-        {messagesList.map((message, index) => (
+        {messages.map((message, index) => (
           <MessageItem message={message} key={index} />
         ))}
       </List>

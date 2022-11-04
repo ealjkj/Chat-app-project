@@ -1,28 +1,18 @@
 const { GraphQLError } = require("graphql");
 const { PubSub } = require("graphql-subscriptions");
-const { assertValidExecutionArguments } = require("graphql/execution/execute");
 const axios = require("axios");
 
 const AUTH_API = "http://localhost:3000";
 const USER_API = "http://localhost:4000";
 const MESSAGES_API = "http://localhost:5000";
 
-const messages = [
-  {
-    text: "Hi",
-    from: "Kate Chopin",
-  },
-  {
-    text: "City of Glass",
-    from: "Paul Auster",
-  },
-];
-
 const pubsub = new PubSub();
 
 const resolvers = {
   Mutation: {
     createMessage: async (parent, { messageInput }) => {
+      console.log("messageCreated:", messageInput);
+
       pubsub.publish("MESSAGE_CREATED", {
         messageCreated: messageInput,
       });
@@ -38,6 +28,8 @@ const resolvers = {
         email,
         firstName,
         lastName,
+        description,
+        avatar,
       } = userInput;
 
       if (password !== passwordConfirm) {
@@ -54,6 +46,8 @@ const resolvers = {
         firstName,
         lastName,
         email,
+        description,
+        avatar,
       });
 
       try {
@@ -75,6 +69,22 @@ const resolvers = {
 
       return { ...data, token: jwt };
     },
+
+    acceptFriend: async (parent, { friendshipInput }) => {
+      const { myId, friendId } = friendshipInput;
+      await axios.post(USER_API + "/user/connect", {
+        id1: myId,
+        id2: friendId,
+      });
+
+      // Create a conversation with your friend
+      await axios.post(MESSAGES_API + "/conversation/create", {
+        isOneOnOne: true,
+        members: [{ userId: myId }, { userId: friendId }],
+      });
+
+      return friendId;
+    },
   },
   Subscription: {
     messageCreated: {
@@ -82,7 +92,60 @@ const resolvers = {
     },
   },
   Query: {
-    messages: () => messages,
+    friends: async (parent, { userId }) => {
+      const { data } = await axios.get(USER_API + "/user/friends/" + userId);
+      return data;
+    },
+    conversations: async (parent, { userId }) => {
+      const { data } = await axios.get(
+        MESSAGES_API + "/conversation/ofUser/" + userId
+      );
+
+      // Get all ids for the first members (distinct from me)
+      const ids = new Set();
+      for (let conversation of data) {
+        conversation.members
+          .filter((value) => value.userId != userId)
+          .filter((value, index) => index <= 3)
+          .map((member) => ids.add(member.userId));
+      }
+
+      const params = encodeURIComponent(Array.from(ids));
+      const res = await axios.get(USER_API + `/user/fromArray/${params}`);
+      const users = res.data;
+
+      const idMap = new Map();
+      for (let user of users) {
+        idMap.set(user._id, {
+          ...user,
+          name: `${user.firstName} ${user.lastName}`,
+        });
+      }
+
+      // Reshape the information.
+      const goodConversation = data.map((conversation) => {
+        let title = conversation.title;
+        if (!conversation.title) {
+          title = conversation.members
+            .filter((conversation) => conversation.userId != userId)
+            .filter((conversation, index) => index <= 3)
+            .map((member) => idMap.get(member.userId).name)
+            .join(", ");
+        }
+
+        const avatars = conversation.members
+          .filter((conversation) => conversation.userId != userId)
+          .filter((conversation, index) => index <= 3)
+          .map((member) => idMap.get(member.userId).avatar);
+
+        const message = conversation.message ? conversation.message : "Say Hi!";
+
+        return { ...conversation, title, avatars, message };
+      });
+
+      console.log(goodConversation);
+      return goodConversation;
+    },
   },
 };
 
