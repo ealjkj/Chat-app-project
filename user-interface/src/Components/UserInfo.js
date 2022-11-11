@@ -7,11 +7,12 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Box,
 } from "@mui/material";
 import EmailIcon from "@mui/icons-material/Email";
+import { useTranslation } from "react-i18next";
 
 const UserInfo = ({ user }) => {
+  const { t } = useTranslation();
   return (
     <Stack
       spacing={1}
@@ -37,7 +38,7 @@ const UserInfo = ({ user }) => {
       <Divider />
 
       <Typography variant="h6" sx={{ alignSelf: "center" }}>
-        Information
+        {t("information")}
       </Typography>
 
       <List>

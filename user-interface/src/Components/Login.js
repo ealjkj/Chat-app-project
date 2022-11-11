@@ -1,4 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
+import { useTranslation } from "react-i18next";
+
 import {
   Box,
   Button,
@@ -14,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link as RouterLinK, Navigate } from "react-router-dom";
 
 const Login = () => {
+  const { t } = useTranslation();
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
@@ -57,32 +60,30 @@ const Login = () => {
       <Paper elevation={6}>
         <Stack spacing={2} sx={{ margin: 3 }}>
           <Typography variant="h5" sx={{ textAlign: "center" }}>
-            {" "}
-            Log In
+            {t("login")}
           </Typography>
           <TextField
             variant="outlined"
-            label="Username"
+            label={t("username")}
             name="username"
             onChange={handleChange}
           />
 
           <TextField
             variant="outlined"
-            label="Password"
+            label={t("password")}
             type="password"
             name="password"
             onChange={handleChange}
           />
 
           <Button variant="contained" type="submit">
-            {" "}
-            Submit{" "}
+            {t("submit")}
           </Button>
           <Typography>
-            Not an account?{" "}
+            {t("notAnAccount") + " "}
             <Link to="/signup" component={RouterLinK}>
-              Sign up
+              {t("signup")}
             </Link>
           </Typography>
         </Stack>

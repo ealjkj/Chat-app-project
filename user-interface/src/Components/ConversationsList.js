@@ -1,24 +1,17 @@
 import { Stack, List, Typography } from "@mui/material";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 import ConversationItem from "./ConversationItem";
 
 const ConversationsList = () => {
-  const dispatch = useDispatch();
-  const hasFriends = useSelector((state) => state.user.friends.length);
-  const userId = useSelector((state) => state.user._id);
+  const { t } = useTranslation();
   const conversations = useSelector((state) => state.conversations);
-
-  useEffect(() => {
-    if (hasFriends && conversations.length === 0) {
-      dispatch({ type: "QUERY_MORE_CONVERSATIONS", payload: { userId } });
-    }
-  }, []);
 
   return (
     <Stack>
       <Typography sx={{ alignSelf: "center", fontWeight: 600 }} variant="h6">
-        Conversations
+        {t("conversations")}
       </Typography>
       <List
         sx={{

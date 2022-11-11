@@ -1,34 +1,20 @@
-import Header from "./Components/Header";
 import Dashboard from "./Components/Dashboard";
 import Conversation from "./Components/Conversation";
 import Login from "./Components/Login";
 import Signup from "./Components/Signup";
+import User from "./Components/User";
 import ContactsPage from "./Components/Contacts";
-import "./App.css";
+import Settings from "./Components/Settings";
+import SettingsChanges from "./Components/SettingsChanges";
+import LanguageSettings from "./Components/LanguageSettings";
 
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Outlet,
-  Navigate,
-} from "react-router-dom";
-import { Box, Stack } from "@mui/material";
+import "./App.css";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Box } from "@mui/material";
 import { Provider } from "react-redux";
 import store from "./store";
-
-const User = () => {
-  return (
-    <>
-      <Stack sx={{ height: "100vh" }}>
-        <Header></Header>
-        <Outlet />
-      </Stack>
-    </>
-  );
-};
-
 const loggedIn = false;
+
 function App() {
   return (
     <Provider store={store}>
@@ -44,6 +30,10 @@ function App() {
                 element={<Conversation />}
               />
               <Route path="contacts" element={<ContactsPage />} />
+              <Route path="settings" element={<Settings />}>
+                <Route path="account" element={<SettingsChanges />}></Route>
+                <Route path="language" element={<LanguageSettings />}></Route>
+              </Route>
             </Route>
 
             <Route path="login" element={<Login />} />

@@ -8,10 +8,12 @@ import {
 import SendIcon from "@mui/icons-material/Send";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 const TypingArea = () => {
   const [messageText, setMessage] = useState("");
   const userId = useSelector((state) => state.user._id);
   const dispatch = useDispatch();
+  const { conversationId } = useParams();
 
   const handleChange = (event) => {
     setMessage(event.target.value);
@@ -21,7 +23,7 @@ const TypingArea = () => {
     event.preventDefault();
     dispatch({
       type: "MUTATE_CREATE_MESSAGE",
-      payload: { message: { from: userId, text: messageText } },
+      payload: { message: { from: userId, text: messageText, conversationId } },
     });
     setMessage("");
   };

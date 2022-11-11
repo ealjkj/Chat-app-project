@@ -1,12 +1,14 @@
 type Message {
-  text: String
-  from: String
+  text: String!
+  from: String!
   conversationId: ID
+  authorName: String
+  createdAt: String
 }
 
 input MessageInput {
-  from: ID
-  text: String
+  from: ID!
+  text: String!
   conversationId: ID
 }
 
@@ -64,8 +66,9 @@ type Mutation {
 type Query {
   friends(userId: ID): [User]
   conversations(userId: ID): [Conversation]
+  messages(conversationId: ID): [Message]
 }
 
 type Subscription {
-  messageCreated: Message
+  messageCreated(conversationId: ID):
 }

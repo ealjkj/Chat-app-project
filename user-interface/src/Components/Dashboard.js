@@ -1,18 +1,7 @@
 import { Grid } from "@mui/material";
 import UserInfo from "./UserInfo";
 import FriendsList from "./FriendsList";
-import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-
-const emptyUser = {
-  username: "ealjkj",
-  firstName: "",
-  lastName: "",
-  email: "",
-  avatar: "",
-  description: "",
-  friends: [],
-};
 
 const Dashboard = () => {
   const user = useSelector((state) => state.user);
@@ -23,7 +12,7 @@ const Dashboard = () => {
         <UserInfo user={user}></UserInfo>
       </Grid>
       <Grid item xs={12} md={5}>
-        <FriendsList friends={user.friends}></FriendsList>
+        <FriendsList friends={user?.friends}></FriendsList>
       </Grid>
     </Grid>
   );

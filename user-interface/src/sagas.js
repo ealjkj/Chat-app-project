@@ -1,7 +1,6 @@
 import { gql } from "@apollo/client";
 import { put, takeEvery, all, call, takeLatest } from "redux-saga/effects";
 import client from "./client";
-
 export function* queryUser(action) {
   const options = {
     mutation: gql`
@@ -15,6 +14,7 @@ export function* queryUser(action) {
           friends
           conversations
           token
+          avatar
         }
       }
     `,
@@ -46,15 +46,7 @@ export function* mutateCreateMessage(action) {
       messageInput: action.payload.message,
     },
   };
-
-  const res = yield call(client.mutate, options);
-  const message = res.data.createMessage;
-
-  console.log(message);
-  yield put({
-    type: "ADD_MESSAGE",
-    payload: { message: { from: message.from, content: message.text } },
-  });
+  yield call(client.mutate, options);
 }
 
 export function* watchMutateCreateMessage() {
@@ -70,6 +62,7 @@ export function* queryMoreFriends(action) {
           username
           firstName
           lastName
+          avatar
         }
       }
     `,

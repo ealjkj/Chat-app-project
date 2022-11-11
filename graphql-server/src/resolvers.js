@@ -1,5 +1,5 @@
 const { GraphQLError } = require("graphql");
-const { PubSub } = require("graphql-subscriptions");
+const { PubSub, withFilter } = require("graphql-subscriptions");
 const axios = require("axios");
 
 const AUTH_API = "http://localhost:3000";
@@ -9,13 +9,28 @@ const MESSAGES_API = "http://localhost:5000";
 const pubsub = new PubSub();
 
 const resolvers = {
+  Message: {},
+
   Mutation: {
     createMessage: async (parent, { messageInput }) => {
-      console.log("messageCreated:", messageInput);
+      const createdDate = Date.now();
 
-      pubsub.publish("MESSAGE_CREATED", {
-        messageCreated: messageInput,
+      axios.post(MESSAGES_API + `/message/create`, {
+        from: messageInput.from,
+        content: messageInput.text,
+        conversationId: messageInput.conversationId,
+        createdAt: createdDate,
       });
+
+      const { data } = await axios.get(USER_API + `/user/${messageInput.from}`);
+      const user = data;
+      const messageCreated = {
+        ...messageInput,
+        authorName: `${user.firstName} ${user.lastName}`,
+        createdAt: createdDate,
+      };
+
+      pubsub.publish("MESSAGE_CREATED", { messageCreated });
 
       return messageInput;
     },
@@ -88,12 +103,26 @@ const resolvers = {
   },
   Subscription: {
     messageCreated: {
-      subscribe: () => pubsub.asyncIterator("MESSAGE_CREATED"),
+      subscribe: withFilter(
+        () => {
+          return pubsub.asyncIterator(["MESSAGE_CREATED"]);
+        },
+        (payload, variables) => {
+          return true;
+        }
+      ),
     },
   },
   Query: {
     friends: async (parent, { userId }) => {
       const { data } = await axios.get(USER_API + "/user/friends/" + userId);
+      return data;
+    },
+    messages: async (parent, { conversationId }) => {
+      const { data } = await axios.get(
+        MESSAGES_API + "/conversation/ofConversation/" + conversationId
+      );
+
       return data;
     },
     conversations: async (parent, { userId }) => {
@@ -142,8 +171,6 @@ const resolvers = {
 
         return { ...conversation, title, avatars, message };
       });
-
-      console.log(goodConversation);
       return goodConversation;
     },
   },

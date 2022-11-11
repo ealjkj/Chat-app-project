@@ -10,7 +10,7 @@ const MessageItem = ({ message }) => {
     <Box sx={{ maxWidth: "70%", width: "max-content", alignSelf: align }}>
       <ListItem sx={{ padding: 0 }}>
         <ListItemText
-          primary={message.from}
+          primary={message.authorName}
           secondary={message.content}
           sx={{ backgroundColor: color, borderRadius: 2, padding: 1 }}
         />

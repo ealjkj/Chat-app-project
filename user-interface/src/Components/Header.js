@@ -11,14 +11,33 @@ import {
 } from "@mui/material";
 import { useSelector } from "react-redux";
 import { Link as RouterLink } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useState } from "react";
+import DropdownMenu from "./DropdownMenu";
 
 const Header = () => {
+  const [anchorEl, setAnchorEl] = useState(null);
   const avatarUrl = useSelector((state) => state.user?.avatar || "");
+  const { t } = useTranslation();
+  const conversations = useSelector((state) => state.conversations);
+  const someConversation = conversations[0]._id;
+
   const pages = [
-    { title: "Dashboard", link: "/user/dashboard" },
-    { title: "Conversations", link: "/user/conversation/1" },
-    { title: "Contacts", link: "/user/contacts" },
+    { title: t("dashboard"), link: "/user/dashboard" },
+    {
+      title: t("conversations"),
+      link: `/user/conversation/${someConversation}`,
+    },
+    { title: t("contacts"), link: "/user/contacts" },
   ];
+
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
     <Box>
@@ -43,9 +62,9 @@ const Header = () => {
                 );
               })}
             </Box>
-
+            <DropdownMenu anchorEl={anchorEl} onClose={handleClose} />
             <Tooltip title="Settings">
-              <IconButton>
+              <IconButton onClick={handleMenu}>
                 <Avatar src={avatarUrl} />
               </IconButton>
             </Tooltip>

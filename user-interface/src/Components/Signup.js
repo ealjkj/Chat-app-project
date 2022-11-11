@@ -9,6 +9,7 @@ import {
 import { useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { Navigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const CREATE_USER = gql`
   mutation ($userInput: UserInput) {
@@ -20,6 +21,7 @@ const CREATE_USER = gql`
 `;
 
 const Signup = () => {
+  const { t } = useTranslation();
   const [signUpError, setSignUpError] = useState(null);
   const [signUpSuccess, setSignUpSuccess] = useState(false);
 
@@ -75,20 +77,19 @@ const Signup = () => {
       <Paper elevation={6}>
         <Stack spacing={2} sx={{ margin: 3 }}>
           <Typography variant="h5" sx={{ textAlign: "center" }}>
-            {" "}
-            Sign Up
+            {t("signup")}
           </Typography>
           <Stack spacing={2} direction="row" sx={{ width: "100%" }}>
             <TextField
               variant="outlined"
-              label="First Name"
+              label={t("firstName")}
               name="firstName"
               required
               onChange={handleChange}
             />
             <TextField
               variant="outlined"
-              label="Last Name"
+              label={t("lastName")}
               name="lastName"
               required
               onChange={handleChange}
@@ -96,7 +97,7 @@ const Signup = () => {
           </Stack>
           <TextField
             variant="outlined"
-            label="Username"
+            label={t("username")}
             name="username"
             required
             onChange={handleChange}
@@ -104,7 +105,7 @@ const Signup = () => {
 
           <TextField
             variant="outlined"
-            label="Password"
+            label={t("password")}
             name="password"
             type="password"
             required
@@ -112,7 +113,7 @@ const Signup = () => {
           />
           <TextField
             variant="outlined"
-            label="Confirm Password"
+            label={t("confirmPassword")}
             name="passwordConfirm"
             type="password"
             required
@@ -121,7 +122,7 @@ const Signup = () => {
 
           <TextField
             variant="outlined"
-            label="Email"
+            label={t("email")}
             name="email"
             type="email"
             required
@@ -130,7 +131,7 @@ const Signup = () => {
 
           <Button variant="contained" type="submit">
             {" "}
-            Create Account{" "}
+            {t("createAccount")}{" "}
           </Button>
 
           {signUpError || !signUpSuccess ? (
