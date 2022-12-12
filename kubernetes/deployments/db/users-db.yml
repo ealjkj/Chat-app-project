@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-db-deployment
+  labels:
+    app: users-db
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: users-db
+  template:
+    metadata:
+      labels:
+        app: users-db
+    spec:
+      volumes:
+        - name: users-volume
+          persistentVolumeClaim: 
+            claimName: users-pvc
+      containers:
+      - name: mongo
+        image: mongo
+        volumeMounts:
+          - name: users-volume
+            mountPath: /data/db
+        ports:
+        - containerPort: 27017
+  
+  

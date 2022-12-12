@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-app-deployment
+  labels:
+    app: users-app
+spec:
+  replicas: 3
+  selector: 
+    matchLabels:
+      app: users-app
+  template:
+    metadata:
+      labels:
+        app: users-app
+    spec:
+      containers:
+      - name: users-app
+        image: ealjkj/users-service
+        env:
+        - name: MONGODB_URL
+          value: mongodb://users-db-service:27017/users-db
+        - name: PORT
+          value: "7000"

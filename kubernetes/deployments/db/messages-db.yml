@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: messages-db-deployment
+  labels:
+    app: messages-db
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: messages-db
+  template:
+    metadata:
+      labels:
+        app: messages-db
+    spec:
+      volumes:
+        - name: messages-volume
+          persistentVolumeClaim: 
+            claimName: messages-pvc
+      containers:
+      - name: mongo
+        image: mongo
+        volumeMounts:
+          - name: messages-volume
+            mountPath: /data/db
+        ports:
+        - containerPort: 27017
+  
+  

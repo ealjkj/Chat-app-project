@@ -1,4 +1,5 @@
 type Message {
+  _id: ID
   text: String!
   from: String!
   conversationId: ID
@@ -12,6 +13,15 @@ input MessageInput {
   conversationId: ID
 }
 
+type Settings {
+  language: String
+}
+
+type FriendRequest {
+  sourceId: ID
+  targetId: ID
+}
+
 type User {
   _id: ID
   username: String!
@@ -21,10 +31,14 @@ type User {
   passwordConfirm: String
   email: String
   friends: [ID]
+  friendRequests: [User]
   conversations: [ID]
   token: String
   description: String
   avatar: String
+  requestSent: Boolean
+  settings: Settings
+  joinedAt: String
 }
 
 type Response {
@@ -34,8 +48,20 @@ type Response {
 
 type Conversation {
   _id: ID
+  isOneOnOne: Boolean
   title: String
   members: [User]
+  avatars: [String]
+  lastMessage: Message
+  admins: [ID]
+  joinedAt: String
+}
+
+input ConversationInput {
+  _id: ID
+  creatorId: ID
+  title: String
+  members: [MemberInput]
   avatars: [String]
   message: String
 }
@@ -51,24 +77,49 @@ input UserInput {
   avatar: String
 }
 
+input MemberInput {
+  userId: String
+}
+
 input FriendshipInput {
   myId: ID!
   friendId: ID!
 }
 
+type Existence {
+  username: Boolean
+  email: Boolean
+}
+
 type Mutation {
   login(userInput: UserInput): User!
   createUser(userInput: UserInput): Response!
+  logout: Response!
   createMessage(messageInput: MessageInput): Message!
+  createConversation(conversationInput: ConversationInput): Conversation
+  sendFriendRequest(friendshipInput: FriendshipInput): ID
   acceptFriend(friendshipInput: FriendshipInput): ID
+  rejectFriend(friendshipInput: FriendshipInput): ID
+  leaveConversation(myId: ID, conversationId: ID): ID
+  removeParticipant(conversationId: ID, participantId: ID): ID
+  addParticipants(conversationId: ID, participants: [ID]): ID
+  changeLanguage(language: String): String
+  unfriend(friendId: ID): ID
 }
 
 type Query {
+  user: User!
+  friendRequests: [User]
   friends(userId: ID): [User]
-  conversations(userId: ID): [Conversation]
+  conversations: [Conversation]
   messages(conversationId: ID): [Message]
+  discoveredUsers(search: String, myId: ID): [User]
+  conversation(conversationId: ID): Conversation
+  exists(username: String, email: String): Existence
 }
 
 type Subscription {
-  messageCreated(conversationId: ID):
+  messageCreated(conversationId: ID): Message
+  friendRequestSent(targetId: ID): FriendRequest
+  friendRequestAccepted(targetId: ID): FriendRequest
 }

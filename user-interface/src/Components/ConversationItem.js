@@ -31,7 +31,7 @@ const ConversationItem = ({ conversation }) => {
 
           <ListItemText
             primary={conversation.title}
-            secondary={conversation.message}
+            secondary={conversation.lastMessage.content}
           />
           <IconButton>
             <MoreVertIcon />

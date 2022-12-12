@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: graphql-server-deployment
+  labels:
+    app: graphql-server
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: graphql-server
+  template:
+    metadata:
+      labels:
+        app: graphql-server
+    spec:
+      containers:
+      - name: graphql-server
+        image: ealjkj/graphql-service
+        env:
+        - name: AUTH_API
+          value: http://auth-app-service:5000
+        - name: MESSAGES_API
+          value: http://messages-app-service:6000
+        - name: USER_API
+          value: http://users-app-service:7000
+        - name: PORT
+          value: "4000"
+        command: ["node", "/usr/src/app/src/app.js"]

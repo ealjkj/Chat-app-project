@@ -21,7 +21,7 @@ router.get("/ofUser/:userId", async (req, res) => {
   try {
     const conversations = await Conversation.find({
       members: { $elemMatch: { userId } },
-    });
+    }).populate("lastMessage");
 
     res.send(conversations);
   } catch (error) {
@@ -32,9 +32,9 @@ router.get("/ofUser/:userId", async (req, res) => {
 router.post("/create", async (req, res) => {
   try {
     const conversation = await Conversation.create(req.body);
-    console.log(conversation);
     return res.send(conversation);
   } catch (error) {
+    console.log(error);
     return res.status(500).send(error.message);
   }
 });
@@ -55,21 +55,32 @@ router.delete("/delete/:id", async (req, res) => {
   }
 });
 
-router.put("/addUser/:id", async (req, res) => {
+router.put("/addUsers/:id", async (req, res) => {
   const { id } = req.params;
-  const { userId } = req.body;
+  const { usersIds } = req.body;
+
   try {
     const conversation = await Conversation.findById(id);
-
     if (!conversation) {
       return res.status(404).send({ message: "Conversation not Found" });
     }
 
-    const member = { userId };
-    conversation.members.push(member);
-    conversation.save();
-    res.send(conversation);
+    const nonRepeatedIds = usersIds.filter(
+      (id) => !conversation.includesUser(id)
+    );
+    const newMembers = nonRepeatedIds.map((userId) => ({ userId }));
+
+    const updatedConversation = await Conversation.findByIdAndUpdate(id, {
+      $push: {
+        members: {
+          $each: newMembers,
+        },
+      },
+    });
+
+    res.send(updatedConversation);
   } catch (error) {
+    console.log(error);
     res.send({ message: "Server Error" });
   }
 });
@@ -89,6 +100,31 @@ router.put("/removeUser/:id", async (req, res) => {
     );
 
     conversation.save();
+    res.send(conversation);
+  } catch (error) {
+    res.send({ message: "Server Error" });
+  }
+});
+
+router.put("/leaveConversation/:id", async (req, res) => {
+  const { id } = req.params;
+  const { userId } = req.body;
+  try {
+    const conversation = await Conversation.findById(id);
+
+    if (!conversation) {
+      return res.status(404).send({ message: "Conversation not Found" });
+    }
+
+    if (conversation.members.length <= 1) {
+      await Conversation.findByIdAndDelete(id);
+    }
+
+    await Conversation.findOneAndUpdate(
+      { _id: id },
+      { $pull: { members: { userId: userId } } }
+    );
+
     res.send(conversation);
   } catch (error) {
     res.send({ message: "Server Error" });

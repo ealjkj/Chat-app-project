@@ -1,6 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
 import { useTranslation } from "react-i18next";
-
+import { useEffect } from "react";
 import {
   Box,
   Button,
@@ -9,16 +9,23 @@ import {
   Typography,
   Stack,
   Link,
+  Alert,
+  IconButton,
+  Fade,
 } from "@mui/material";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
 import { Link as RouterLinK, Navigate } from "react-router-dom";
+import CloseIcon from "@mui/icons-material/Close";
 
 const Login = () => {
   const { t } = useTranslation();
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch({ type: "CHANGE_SIGNED", payload: { value: false } });
+  }, []);
 
   const [inputs, setInputs] = useState({
     username: "",
@@ -34,9 +41,8 @@ const Login = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("submiting");
     dispatch({
-      type: "QUERY_USER",
+      type: "LOG_IN",
       payload: {
         user: inputs,
       },

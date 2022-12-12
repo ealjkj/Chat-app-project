@@ -1,6 +1,10 @@
 const { Schema, model } = require("mongoose");
 const validator = require("validator");
 
+const SettingsSchema = new Schema({
+  language: String,
+});
+
 const UserSchema = new Schema({
   username: {
     type: String,
@@ -29,7 +33,9 @@ const UserSchema = new Schema({
   },
   avatar: String,
   friends: [String],
+  friendRequests: [{ type: Schema.Types.ObjectId, ref: "User" }],
   conversations: [String],
+  settings: SettingsSchema,
 });
 
 const User = model("User", UserSchema);

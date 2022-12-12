@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: 
+  name: auth-pvc
+  labels: 
+    app: auth-db
+spec:
+  storageClassName: db-storage-class
+  accessModes: 
+    - ReadWriteOnce
+  resources: 
+    requests: 
+      storage: 1Gi

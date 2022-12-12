@@ -11,9 +11,11 @@ passport.use(
   "signup",
   new LocalStrategy(async (username, password, done) => {
     try {
+      await User.init();
       const user = await User.create({ username, password });
       return done(null, user);
     } catch (error) {
+      // console.log(error);
       return done(error);
     }
   })
@@ -44,7 +46,7 @@ passport.use(
   new JWTStrategy(
     {
       secretOrKey: JWT_SECRET,
-      jwtFromRequest: ExtractJWT.fromUrlQueryParameter("secret_token"),
+      jwtFromRequest: ExtractJWT.fromUrlQueryParameter("token"),
     },
     async (token, done) => {
       try {

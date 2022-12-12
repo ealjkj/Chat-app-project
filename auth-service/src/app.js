@@ -1,7 +1,5 @@
 const express = require("express");
-console.log(process.env);
 require("dotenv").config();
-console.log(process.env);
 require("./db/mongoose");
 
 // Routes
@@ -22,6 +20,11 @@ const PORT = process.env.PORT;
 
 app.use(express.json());
 app.use(userRouter);
+
+// Error handeling
+app.use((err, req, res, next) => {
+  return res.status(500).send({ error: err.message, code: err.code });
+});
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);

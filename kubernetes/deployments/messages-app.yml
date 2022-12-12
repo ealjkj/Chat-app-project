@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: messages-app-deployment
+  labels:
+    app: messages-app
+spec:
+  replicas: 3
+  selector: 
+    matchLabels:
+      app: messages-app
+  template:
+    metadata:
+      labels:
+        app: messages-app
+    spec:
+      containers:
+      - name: messages-app
+        image: ealjkj/messages-service
+        env:
+        - name: MONGODB_URL
+          value: mongodb://messages-db-service:27017/messages-db
+        - name: PORT
+          value: "6000"
+        command: ["node", "/usr/src/app/src/app.js"]

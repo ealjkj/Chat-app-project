@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-app-deployment
+  labels:
+    app: auth-app
+spec:
+  replicas: 3
+  selector: 
+    matchLabels:
+      app: auth-app
+  template:
+    metadata:
+      labels:
+        app: auth-app
+    spec:
+      containers:
+      - name: auth-app
+        image: ealjkj/auth-service
+        env:
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: main-secret
+              key: jwt_secret
+        - name: MONGODB_URL
+          value: mongodb://auth-db-service:27017/auth-db
+        - name: PORT
+          value: "5000"

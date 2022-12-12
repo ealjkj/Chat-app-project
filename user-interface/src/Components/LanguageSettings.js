@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function LanguageSettings() {
-  const language = useSelector((state) => state.settings?.language);
+  const language = useSelector((state) => state.language);
   const [languageOnSelect, setLanguageOnSelect] = useState(language);
   const dispatch = useDispatch();
   const { t, i18n } = useTranslation();
@@ -27,11 +27,10 @@ export default function LanguageSettings() {
     event.preventDefault();
     i18n.changeLanguage(languageOnSelect);
     dispatch({
-      type: "CHANGE_LANGUAGE",
+      type: "SAVE_LANGUAGE",
       payload: { language: languageOnSelect },
     });
   };
-
   return (
     <Box>
       <Paper

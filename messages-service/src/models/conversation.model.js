@@ -22,8 +22,9 @@ const ConversationSchema = new Schema({
     type: Boolean,
     default: true,
   },
-  message: String,
+  lastMessage: { type: Schema.Types.ObjectId, ref: "Message" },
   members: [MemberSchema],
+  admins: [String],
 });
 
 ConversationSchema.pre("save", function (next) {
@@ -34,10 +35,15 @@ ConversationSchema.pre("save", function (next) {
 });
 
 ConversationSchema.pre("remove", function (next) {
-  Message.deleteOne({ conversationId: this._id }).exec();
+  Message.deleteMany({ conversationId: this._id }).exec();
   next();
 });
 
+ConversationSchema.methods.includesUser = function (id) {
+  const conversation = this;
+  const member = conversation.members.find(({ userId }) => userId === id);
+  return Boolean(member);
+};
 const Conversation = model("Conversation", ConversationSchema);
 
 module.exports = Conversation;

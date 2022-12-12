@@ -10,9 +10,9 @@ COPY . .
 
 RUN npm run build
 
-FROM nginx
+FROM nginx:1.23.2  
 
-COPY --from=base /usr/src/app/dist /usr/share/nginx/html
+COPY --from=base /usr/src/app/build /usr/share/nginx/html
 
 EXPOSE 443
 

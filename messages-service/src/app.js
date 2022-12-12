@@ -1,4 +1,5 @@
 const express = require("express");
+require("dotenv").config();
 const expressWinston = require("express-winston");
 require("./db/mongoose");
 

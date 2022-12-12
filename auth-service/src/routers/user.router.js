@@ -11,7 +11,10 @@ const JWT_SECRET = process.env.JWT_SECRET || "mysecret";
 router.post(
   "/signup",
   passport.authenticate("signup", { session: false }),
-  (req, res) => {
+  async (req, res) => {
+    req.user.userId = req.body.userId;
+    await req.user.save();
+    // console.log(req.user);
     res.send(req.user.username);
   }
 );
@@ -19,14 +22,22 @@ router.post(
 router.post("/login", async (req, res, next) => {
   const authFunc = passport.authenticate("login", async (err, user, info) => {
     try {
-      if (err || !user) {
-        const error = new Error("Something went wrong");
+      if (!user) {
+        const error = new Error("INVALID_CREDENTIALS");
         return next(error);
+      }
+
+      if (err) {
+        return next(err);
       }
 
       req.login(user, { session: false }, async (error) => {
         if (error) return next(error);
-        const body = { _id: user._id, username: user.username };
+        const body = {
+          _id: user._id,
+          username: user.username,
+          userId: user.userId,
+        };
         const token = jwt.sign({ user: body }, JWT_SECRET);
         return res.send({ token });
       });

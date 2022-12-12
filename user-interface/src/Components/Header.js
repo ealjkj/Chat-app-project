@@ -19,14 +19,13 @@ const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const avatarUrl = useSelector((state) => state.user?.avatar || "");
   const { t } = useTranslation();
-  const conversations = useSelector((state) => state.conversations);
-  const someConversation = conversations[0]._id;
+  const currentConversation = useSelector((state) => state.currentConversation);
 
   const pages = [
     { title: t("dashboard"), link: "/user/dashboard" },
     {
       title: t("conversations"),
-      link: `/user/conversation/${someConversation}`,
+      link: `/user/conversation/${currentConversation}`,
     },
     { title: t("contacts"), link: "/user/contacts" },
   ];
