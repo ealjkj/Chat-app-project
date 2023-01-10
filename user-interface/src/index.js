@@ -7,7 +7,8 @@ import { ApolloProvider } from "@apollo/client";
 import client from "./client";
 import "./i18n";
 import { Provider } from "react-redux";
-import store from "./store";
+// import store from "./store";
+import store from "./storeNew";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

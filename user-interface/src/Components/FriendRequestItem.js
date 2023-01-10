@@ -10,21 +10,20 @@ import {
 
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 const FriendRequestItem = ({ user }) => {
-  const userId = useSelector((state) => state.user._id);
   const dispatch = useDispatch();
 
   const acceptFriend = () =>
     dispatch({
       type: "ACCEPT_FRIEND",
-      payload: { friend: user, myId: userId },
+      payload: { friend: user },
     });
   const rejectFriend = () =>
     dispatch({
       type: "REJECT_FRIEND",
-      payload: { friend: user, myId: userId },
+      payload: { friend: user },
     });
 
   return (

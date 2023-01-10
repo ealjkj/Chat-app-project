@@ -2,7 +2,6 @@ require("dotenv").config();
 
 const { createServer } = require("http");
 const express = require("express");
-const cors = require("cors");
 const {
   ApolloServerPluginDrainHttpServer,
 } = require("@apollo/server/plugin/drainHttpServer");

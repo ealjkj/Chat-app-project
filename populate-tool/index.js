@@ -1,8 +1,8 @@
 const Person = require("./Person");
-const axios = require("axios");
 const { GraphQLClient, gql } = require("graphql-request");
+require("dotenv").config();
 
-const endpoint = "http://localhost:7000/graphql";
+const endpoint = process.env.GRAPHQL_URL;
 const graphQlClient = new GraphQLClient(endpoint);
 
 async function createRandomUsers(num) {

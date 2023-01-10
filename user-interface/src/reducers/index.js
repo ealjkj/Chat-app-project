@@ -19,6 +19,8 @@ import signed from "./signed.reducer";
 import loading from "./loading.reducer";
 import existence from "./existence.reducer";
 import extraParticipantsModalOpen from "./extraParticipantsModalOpen.reducer";
+import notification from "./notification.reducer";
+import friendRequestReceived from "./friendRequestReceived.reducer";
 
 export default combineReducers({
   messages,
@@ -40,4 +42,6 @@ export default combineReducers({
   loading,
   existence,
   extraParticipantsModalOpen,
+  notification,
+  friendRequestReceived,
 });

@@ -1,15 +1,21 @@
 const express = require("express");
 const User = require("../models/user.model");
+const logger = require("../logger");
+const mongoose = require("mongoose");
 
 const router = express.Router();
 
 router.get("/fromArray/:ids", async (req, res) => {
   const { ids } = req.params;
+  const objectIds = ids.split(",").map((str) => mongoose.Types.ObjectId(str));
+
+  objectIds.forEach((objectId) => console.log(objectId));
   try {
-    const users = await User.find({ $in: ids.split(",") });
+    const users = await User.find({ _id: { $in: objectIds } });
     if (!users) {
       return res.status(404).send({ message: "User not Found" });
     }
+    logger.info(`*********users: ${users} `);
     res.send(users);
   } catch (error) {
     return res.status(500).send({ message: "Server Error" });

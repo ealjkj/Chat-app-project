@@ -14,6 +14,8 @@ import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import { getI18nParams } from "./i18n";
 
+// Actions
+
 export function* login(action) {
   const options = {
     mutation: gql`
@@ -307,15 +309,12 @@ export function* watchSendFriendRequest() {
 export function* acceptFriend(action) {
   const options = {
     mutation: gql`
-      mutation ($friendshipInput: FriendshipInput) {
-        acceptFriend(friendshipInput: $friendshipInput)
+      mutation ($friendId: ID) {
+        acceptFriend(friendId: $friendId)
       }
     `,
     variables: {
-      friendshipInput: {
-        myId: action.payload.myId,
-        friendId: action.payload.friend._id,
-      },
+      friendId: action.payload.friend._id,
     },
   };
   yield call(client.mutate, options);
@@ -330,17 +329,15 @@ export function* watchAcceptFriend() {
 }
 // -----------------------------------------
 export function* rejectFriend(action) {
+  console.log(action);
   const options = {
     mutation: gql`
-      mutation ($friendshipInput: FriendshipInput) {
-        rejectFriend(friendshipInput: $friendshipInput)
+      mutation ($friendId: ID) {
+        rejectFriend(friendId: $friendId)
       }
     `,
     variables: {
-      friendshipInput: {
-        myId: action.payload.myId,
-        friendId: action.payload.friend._id,
-      },
+      friendId: action.payload.friend._id,
     },
   };
   yield call(client.mutate, options);

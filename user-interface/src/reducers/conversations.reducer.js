@@ -5,7 +5,6 @@ export default function conversations(state = [], action) {
     case "ADD_CONVERSATIONS":
       return [...state, ...action.payload.conversations];
     case "ADD_CONVERSATION":
-      console.log(action.payload.conversation);
       return [action.payload.conversation, ...state];
     case "REMOVE_PARTICIPANT":
       const newState = state.map((conversation) => {

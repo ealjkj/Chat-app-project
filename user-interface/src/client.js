@@ -5,7 +5,8 @@ import { getMainDefinition } from "@apollo/client/utilities";
 import { createClient } from "graphql-ws";
 
 const SERVER_URL = "/graphql";
-const WS_URL = `wss://${window.location.host}/graphqlSubs`;
+const WS_URL = `ws://${window.location.host}/graphqlSubs`;
+// const WS_URL = `wss://${window.location.host}/graphqlSubs`;
 
 const httpLink = new HttpLink({
   uri: SERVER_URL,

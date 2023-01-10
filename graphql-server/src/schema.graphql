@@ -98,8 +98,8 @@ type Mutation {
   createMessage(messageInput: MessageInput): Message!
   createConversation(conversationInput: ConversationInput): Conversation
   sendFriendRequest(friendshipInput: FriendshipInput): ID
-  acceptFriend(friendshipInput: FriendshipInput): ID
-  rejectFriend(friendshipInput: FriendshipInput): ID
+  acceptFriend(friendId: ID): ID
+  rejectFriend(friendId: ID): ID
   leaveConversation(myId: ID, conversationId: ID): ID
   removeParticipant(conversationId: ID, participantId: ID): ID
   addParticipants(conversationId: ID, participants: [ID]): ID
@@ -120,6 +120,6 @@ type Query {
 
 type Subscription {
   messageCreated(conversationId: ID): Message
-  friendRequestSent(targetId: ID): FriendRequest
-  friendRequestAccepted(targetId: ID): FriendRequest
+  friendRequestSent(targetId: ID): User
+  friendRequestAccepted(sourceId: ID): User
 }

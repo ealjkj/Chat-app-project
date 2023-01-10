@@ -1,6 +1,5 @@
 const { getRandomElement } = require("./utils");
 const fs = require("fs");
-const { info } = require("console");
 
 const buffer = fs.readFileSync("data.json");
 const data = JSON.parse(buffer);

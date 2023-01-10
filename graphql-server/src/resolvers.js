@@ -2,7 +2,6 @@ const { GraphQLError } = require("graphql");
 const { PubSub, withFilter } = require("graphql-subscriptions");
 const axios = require("axios");
 
-const AUTH_API = process.env.AUTH_API;
 const USER_API = process.env.USER_API;
 const MESSAGES_API = process.env.MESSAGES_API;
 
@@ -20,10 +19,17 @@ const resolvers = {
     },
   },
 
+  User: {
+    username: async (parent, args, context) => {
+      console.log(args);
+      return parent.username;
+    },
+  },
+
   Conversation: {
     members: async (parent, _, { dataSources }) => {
       const users = await dataSources.userAPI.getUsers(
-        parent.members.map((user) => user._id)
+        parent.members.map((user) => user.userId)
       );
 
       const idMap = new Map();
@@ -50,16 +56,17 @@ const resolvers = {
 
     title: async (parent, _, { user, dataSources }) => {
       const members = await dataSources.userAPI.getUsers(
-        parent.members.map((user) => user._id)
+        parent.members.map((user) => user.userId)
       );
-
       if (parent.title) return parent.title;
+
       const title = members
         .filter((member) => member._id != user.userId)
         .filter((member, index) => index <= 3)
         .map((member) => member.firstName + " " + member.lastName)
         .join(", ");
 
+      console.log(title);
       return title;
     },
 
@@ -180,21 +187,31 @@ const resolvers = {
       return { success: true };
     },
 
-    sendFriendRequest: async (parent, { friendshipInput }) => {
-      const { myId, friendId } = friendshipInput;
+    sendFriendRequest: async (
+      parent,
+      { friendshipInput },
+      { user, dataSources }
+    ) => {
+      const { friendId } = friendshipInput;
 
-      await axios.post(USER_API + "/user/requestFriendship", {
-        sourceId: myId,
+      const friendRequest = {
+        sourceId: user.userId,
         targetId: friendId,
+      };
+
+      const sourceUser = await dataSources.userAPI.getUser(user.userId);
+      await dataSources.userAPI.sendFriendRequest(friendRequest);
+
+      pubsub.publish(`FRIEND_REQUEST_SENT:${friendId}`, {
+        friendRequestSent: sourceUser,
       });
 
       return friendId;
     },
 
-    acceptFriend: async (parent, { friendshipInput }) => {
-      const { myId, friendId } = friendshipInput;
-      await axios.post(USER_API + "/user/acceptFriend", {
-        targetId: myId,
+    acceptFriend: async (parent, { friendId }, { dataSources, user }) => {
+      await dataSources.userAPI.acceptFriend({
+        targetId: user.userId,
         sourceId: friendId,
       });
 
@@ -207,10 +224,10 @@ const resolvers = {
       return friendId;
     },
 
-    rejectFriend: async (parent, { friendshipInput }) => {
-      const { myId, friendId } = friendshipInput;
-      await axios.post(USER_API + "/user/rejectFriend", {
-        targetId: myId,
+    rejectFriend: async (parent, { friendId }, { user, dataSources }) => {
+      console.log(friendId);
+      await dataSources.userAPI.rejectFriend({
+        targetId: user.userId,
         sourceId: friendId,
       });
 
@@ -218,7 +235,6 @@ const resolvers = {
     },
 
     unfriend: async (parent, { friendId }, { user, dataSources }) => {
-      console.log(user.userId, friendId);
       await dataSources.userAPI.unfriend(user.userId, friendId);
       return friendId;
     },
@@ -260,21 +276,20 @@ const resolvers = {
   Subscription: {
     messageCreated: {
       subscribe: withFilter(
-        () => {
+        (_, { conversationId }) => {
           return pubsub.asyncIterator(["MESSAGE_CREATED"]);
         },
-        ({ messageCreated }, { conversationId }) => {
+        ({ messageCreated }, { conversationId }, { user }) => {
           return messageCreated.conversationId === conversationId;
         }
       ),
     },
     friendRequestSent: {
       subscribe: withFilter(
-        () => {
-          return pubsub.asyncIterator(["FRIEND_REQUEST_SENT"]);
+        (_, __, { user }) => {
+          return pubsub.asyncIterator([`FRIEND_REQUEST_SENT:${user.userId}`]);
         },
-        ({ friendRequestSent }, { targetId }) => {
-          console.log(friendRequestSent, targetId);
+        ({ friendRequestSent }, { targetId }, { user }) => {
           return true;
         }
       ),
@@ -285,7 +300,6 @@ const resolvers = {
           return pubsub.asyncIterator(["FRIEND_REQUEST_ACCEPTED"]);
         },
         ({ friendRequestSent }, { targetId }) => {
-          console.log(friendRequestSent, targetId);
           return true;
         }
       ),
@@ -328,6 +342,8 @@ const resolvers = {
       const { userId } = user;
       const conversations =
         await dataSources.messagesAPI.getConversationsFromUser(userId);
+
+      console.log(conversations);
 
       return conversations;
     },

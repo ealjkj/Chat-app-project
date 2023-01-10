@@ -1,6 +1,5 @@
 const express = require("express");
 const passport = require("passport");
-const User = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 
 require("../middleware/passport.middleware");
@@ -14,7 +13,6 @@ router.post(
   async (req, res) => {
     req.user.userId = req.body.userId;
     await req.user.save();
-    // console.log(req.user);
     res.send(req.user.username);
   }
 );

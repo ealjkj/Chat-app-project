@@ -1,10 +1,9 @@
 const mongoose = require("mongoose");
-const MONGODB_URL = process.env.MONGODB_URL;
-
+const logger = require("../logger");
 mongoose
   .connect(process.env.MONGODB_URL, {
     useNewUrlParser: true,
   })
   .then(() => {
-    console.log("conversation-db connected");
+    logger.info("conversation-db connected");
   });

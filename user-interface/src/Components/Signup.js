@@ -8,10 +8,10 @@ import {
   Link,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { gql, useMutation } from "@apollo/client";
 import { Link as RouterLinK, Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
+import isEmail from "validator/lib/isEmail";
 
 const Signup = () => {
   const { t } = useTranslation();
@@ -62,6 +62,12 @@ const Signup = () => {
           helperText: "Password should at least 8 characters long",
         };
 
+      if (value.includes(" "))
+        return {
+          error: true,
+          helperText: "Password should not contain whitespaces",
+        };
+
       return { error: false, helperText: "" };
     },
 
@@ -70,6 +76,16 @@ const Signup = () => {
         return {
           error: true,
           helperText: "Passwords should Match",
+        };
+
+      return { error: false, helperText: "" };
+    },
+
+    email: (value) => {
+      if (!isEmail(value))
+        return {
+          error: true,
+          helperText: "Not valid email",
         };
 
       return { error: false, helperText: "" };
@@ -105,6 +121,11 @@ const Signup = () => {
     !validations.email.error &&
     !existence.username &&
     !existence.email;
+
+  const emailError = validations.email.error || existence.email;
+  const emailHelperText = existence.email
+    ? `Another account has registered this email`
+    : validations.email.helperText;
 
   return (
     <Box
@@ -174,10 +195,12 @@ const Signup = () => {
           />
 
           <TextField
-            error={existence.email}
-            helperText={
-              existence.email ? `Another account has registered this email` : ""
-            }
+            // error={existence.email}
+            error={emailError}
+            helperText={emailHelperText}
+            // helperText={
+            //   existence.email ? `Another account has registered this email` : ""
+            // }
             variant="outlined"
             label={t("email")}
             name="email"

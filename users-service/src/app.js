@@ -21,6 +21,12 @@ const PORT = process.env.PORT;
 app.use(express.json());
 app.use("/user", userRouter);
 
+// Error handeling
+app.use((err, req, res, next) => {
+  logger.error(err.message);
+  return res.status(500).send({ error: err.message, code: err.code });
+});
+
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
 });
