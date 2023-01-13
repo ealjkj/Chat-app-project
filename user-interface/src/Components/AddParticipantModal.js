@@ -1,10 +1,11 @@
-import { Box, Button, InputBase, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import AddToConversationList from "./AddToConversationList";
 import AddedParticipantsChips from "./AddedParticipantsChips.js";
 import SearchBar from "./SearchBar";
 import { useDispatch, useSelector } from "react-redux";
 import { gql, useMutation } from "@apollo/client";
-import { useState } from "react";
+import { closeModal } from "../slices/modalOpen.slice";
+import { changeModalSearch } from "../slices/modalSearcher.slice";
 
 const CREATE_CONVERSATION = gql`
   mutation ($conversationInput: ConversationInput) {
@@ -19,7 +20,7 @@ export default function CreateConversationModal(addParticipants = false) {
   const participantsToAdd = useSelector((state) => state.participantsToAdd);
   const modalSearcher = useSelector((state) => state.modalSearcher);
   const creatorId = useSelector((state) => state.user._id);
-  const [createConversation] = useMutation(CREATE_CONVERSATION);
+  useMutation(CREATE_CONVERSATION);
   const conversation = useSelector((state) =>
     state.currentConversation.find(
       (conversation) => conversation._id === state.currentConversation
@@ -32,14 +33,11 @@ export default function CreateConversationModal(addParticipants = false) {
       .concat([{ userId: creatorId }]);
 
     dispatch({ type: "QUERY_ADD_PARTICIPANTS", payload: { participants } });
-    dispatch({ type: "CLOSE_MODAL" });
+    dispatch(closeModal());
   };
 
   const handleChange = (event) => {
-    dispatch({
-      type: "CHANGE_MODAL_SEARCH",
-      payload: { value: event.target.value },
-    });
+    dispatch(changeModalSearch({ value: event.target.value }));
   };
 
   return (

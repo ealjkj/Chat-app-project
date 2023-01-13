@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
-import { Box, Typography, Avatar, Button, IconButton } from "@mui/material";
+import { Box, Typography, Avatar, IconButton } from "@mui/material";
+import { openDetailsModal } from "../slices/detailsModalOpen.slice";
 
 export default function ConversationHeader() {
   const dispatch = useDispatch();
@@ -11,7 +12,7 @@ export default function ConversationHeader() {
   );
 
   const handleClick = () => {
-    dispatch({ type: "OPEN_DETAILS_MODAL" });
+    dispatch(openDetailsModal());
   };
 
   return (

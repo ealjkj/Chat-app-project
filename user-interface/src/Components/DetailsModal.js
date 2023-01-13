@@ -1,19 +1,20 @@
-import {
-  Box,
-  Button,
-  InputBase,
-  Typography,
-  Avatar,
-  Modal,
-} from "@mui/material";
+import { Box, Button, Typography, Avatar, Modal } from "@mui/material";
 import SearchBar from "./SearchBar";
 import PartipantsList from "./ParticipantsList";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import CreateConversationModal from "./CreateConversationModal";
+import { closeDetailsModal } from "../slices/detailsModalOpen.slice";
+import { changeModalSearch } from "../slices/modalSearcher.slice";
+import {
+  closeExtraModal,
+  openExtraModal,
+} from "../slices/extraParticipantsModalOpen.slice";
+import { useTranslation } from "react-i18next";
 
 export default function DetailsModal() {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const extraParticipantsModalOpen = useSelector(
     (state) => state.extraParticipantsModalOpen
   );
@@ -27,18 +28,15 @@ export default function DetailsModal() {
   );
 
   useEffect(() => {
-    if (!conversation) dispatch({ type: "CLOSE_DETAILS_MODAL" });
-  }, [conversation]);
+    if (!conversation) dispatch(closeDetailsModal());
+  }, [conversation, dispatch]);
 
   const handleChange = (event) => {
-    dispatch({
-      type: "CHANGE_MODAL_SEARCH",
-      payload: { value: event.target.value },
-    });
+    dispatch(changeModalSearch({ value: event.target.value }));
   };
 
   const handleClose = () => {
-    dispatch({ type: "CLOSE_EXTRA_MODAL" });
+    dispatch(closeExtraModal());
   };
 
   const handleLeave = () => {
@@ -46,7 +44,7 @@ export default function DetailsModal() {
   };
 
   const handleAdd = () => {
-    dispatch({ type: "OPEN_EXTRA_MODAL" });
+    dispatch(openExtraModal());
   };
 
   if (!conversation) return <div>No conversation</div>;
@@ -79,7 +77,7 @@ export default function DetailsModal() {
       ) : null}
       {conversation.isOneOnOne ? null : (
         <SearchBar
-          label="Search Friends"
+          label={t("searchFriends")}
           value={modalSearcher}
           menu={false}
           onChange={handleChange}
@@ -91,7 +89,7 @@ export default function DetailsModal() {
           variant="outlined"
           onClick={handleAdd}
         >
-          Add Participant
+          {t("addParticipant")}
         </Button>
       )}
 
@@ -106,7 +104,7 @@ export default function DetailsModal() {
           sx={{ width: "50%", alignSelf: "flex-end" }}
           onClick={handleLeave}
         >
-          Leave Conversation
+          {t("leaveConversation")}
         </Button>
       )}
 

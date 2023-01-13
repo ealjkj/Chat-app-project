@@ -53,7 +53,7 @@ export default function LanguageSettings() {
         >
           <Typography sx={{ marginRight: 5 }}>{t("selectLanguage")}</Typography>
           <FormControl sx={{ minWidth: 120 }}>
-            <InputLabel id="language-label">{t("Language")}</InputLabel>
+            <InputLabel id="language-label">{t("language")}</InputLabel>
             <Select
               label={t("language")}
               labelId="language-label"

@@ -9,8 +9,9 @@ const pubsub = new PubSub();
 
 const resolvers = {
   Message: {
-    authorName: async ({ from }) => {
-      const { data } = await axios.get(USER_API + `/user/${from}`);
+    authorName: async ({ from }, args, { user, dataSources }) => {
+      const data = await dataSources.userAPI.getUser(from);
+
       return `${data.firstName} ${data.lastName}`;
     },
     text: (parent) => {
@@ -21,7 +22,6 @@ const resolvers = {
 
   User: {
     username: async (parent, args, context) => {
-      console.log(args);
       return parent.username;
     },
   },
@@ -66,7 +66,6 @@ const resolvers = {
         .map((member) => member.firstName + " " + member.lastName)
         .join(", ");
 
-      console.log(title);
       return title;
     },
 
@@ -140,8 +139,13 @@ const resolvers = {
         if (password !== passwordConfirm) {
           throw new GraphQLError("Passwords must match");
         }
+
+        if (password.length > 20) {
+          throw new GraphQLError("Password is longer than 20 characters");
+        }
         const userRes = await dataSources.userAPI.createUser(user);
-        const authRes = await dataSources.authAPI.signup({
+
+        await dataSources.authAPI.signup({
           username: user.username,
           password,
           userId: userRes._id,
@@ -210,27 +214,44 @@ const resolvers = {
     },
 
     acceptFriend: async (parent, { friendId }, { dataSources, user }) => {
+      const targetUser = await dataSources.userAPI.getUser(user.userId);
+
       await dataSources.userAPI.acceptFriend({
         targetId: user.userId,
         sourceId: friendId,
       });
 
-      // Create a conversation with your friend
-      await axios.post(MESSAGES_API + "/conversation/create", {
-        isOneOnOne: true,
-        members: [{ userId: myId }, { userId: friendId }],
+      const conversations =
+        await dataSources.messagesAPI.getConversationsFromUser(user.userId);
+
+      const conversationCreated = conversations.find((conv) => {
+        if (!conv.isOneOnOne) return false;
+        const firstMemberIsUser = conv.members[0].userId === friendId;
+        const secondMemberIsUser = conv.members[1].userId === friendId;
+
+        return firstMemberIsUser || secondMemberIsUser;
+      });
+
+      if (!conversationCreated) {
+        // Create a conversation with your friend
+        await dataSources.messagesAPI.createConversation({
+          isOneOnOne: true,
+          members: [{ userId: user.userId }, { userId: friendId }],
+        });
+      }
+
+      pubsub.publish(`FRIEND_REQUEST_ACCEPTED:${friendId}`, {
+        friendRequestAccepted: targetUser,
       });
 
       return friendId;
     },
 
     rejectFriend: async (parent, { friendId }, { user, dataSources }) => {
-      console.log(friendId);
       await dataSources.userAPI.rejectFriend({
         targetId: user.userId,
         sourceId: friendId,
       });
-
       return friendId;
     },
 
@@ -296,8 +317,10 @@ const resolvers = {
     },
     friendRequestAccepted: {
       subscribe: withFilter(
-        () => {
-          return pubsub.asyncIterator(["FRIEND_REQUEST_ACCEPTED"]);
+        (_, __, { user }) => {
+          return pubsub.asyncIterator([
+            `FRIEND_REQUEST_ACCEPTED:${user.userId}`,
+          ]);
         },
         ({ friendRequestSent }, { targetId }) => {
           return true;
@@ -320,12 +343,18 @@ const resolvers = {
         return { email: res.existence };
       }
     },
-    conversation: async (parent, { conversationId }) => {
-      const { data } = await axios.get(
-        MESSAGES_API + "/conversation/" + conversationId
+    conversation: async (parent, { conversationId }, { user, dataSources }) => {
+      const conversation = await dataSources.userAPI.getConversation(
+        conversationId
       );
 
-      return data;
+      const isMember = conversation.members.find(
+        (member) => member.userId === user.userId
+      );
+
+      if (!isMember) throw GraphQLError("Not part of the conversation");
+
+      return conversation;
     },
     friends: async (parent, { userId }) => {
       const { data } = await axios.get(USER_API + "/user/friends/" + userId);
@@ -342,8 +371,6 @@ const resolvers = {
       const { userId } = user;
       const conversations =
         await dataSources.messagesAPI.getConversationsFromUser(userId);
-
-      console.log(conversations);
 
       return conversations;
     },

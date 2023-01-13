@@ -9,15 +9,15 @@ router.get("/fromArray/:ids", async (req, res) => {
   const { ids } = req.params;
   const objectIds = ids.split(",").map((str) => mongoose.Types.ObjectId(str));
 
-  objectIds.forEach((objectId) => console.log(objectId));
   try {
     const users = await User.find({ _id: { $in: objectIds } });
     if (!users) {
       return res.status(404).send({ message: "User not Found" });
     }
     logger.info(`*********users: ${users} `);
-    res.send(users);
+    return res.send(users);
   } catch (error) {
+    logger.error(error);
     return res.status(500).send({ message: "Server Error" });
   }
 });
@@ -30,6 +30,7 @@ router.get("/exists", async (req, res) => {
     }
     res.send({ existence: true });
   } catch (error) {
+    logger.error(error);
     return res.status(500).send({ message: "Server Error" });
   }
 });
@@ -43,12 +44,17 @@ router.put("/editSettings/:userId", async (req, res) => {
       return res.status(404).send({ message: "User not Found" });
     }
 
-    user.settings = { ...user.settings.toObject(), ...req.body };
-    user.settings;
+    if (user.settings) {
+      user.settings = { ...user.settings.toObject(), ...req.body };
+    } else {
+      user.settings = req.body;
+    }
+
     await user.save();
 
     res.send(user);
   } catch (error) {
+    logger.error(error);
     return res.status(500).send(error);
   }
 });
@@ -63,6 +69,7 @@ router.get("/fromSearch", async (req, res) => {
     }
     res.send(users);
   } catch (error) {
+    logger.error(error);
     return res.status(500).send({ message: "Server Error" });
   }
 });
@@ -77,8 +84,8 @@ router.post("/create", async (req, res) => {
     });
     res.send(user);
   } catch (error) {
-    console.error(error);
-    res.status(500).send({ message: error.message });
+    logger.error(error);
+    return res.status(500).send({ message: error.message });
   }
 });
 
@@ -94,7 +101,8 @@ router.delete("/delete/:id", async (req, res) => {
     user.remove();
     res.send(user);
   } catch (error) {
-    res.status(500).send({ message: "Server Error" });
+    logger.error(error);
+    return res.status(500).send({ message: "Server Error" });
   }
 });
 
@@ -114,11 +122,12 @@ router.put("/update/:id", async (req, res) => {
     user.save();
     res.send(user);
   } catch (error) {
-    res.send({ message: "Server Error" });
+    logger.error(error);
+    return res.send({ message: "Server Error" });
   }
 });
 
-router.post("/requestFriendship", async (req, res) => {
+router.post("/friendRequest", async (req, res) => {
   const { sourceId, targetId } = req.body;
   if (sourceId === targetId) {
     res.status(400).send("User cannot add itself");
@@ -152,11 +161,12 @@ router.post("/requestFriendship", async (req, res) => {
 
     return res.send();
   } catch (error) {
-    res.send({ message: "Server Error" });
+    logger.error(error);
+    return res.send({ message: "Server Error" });
   }
 });
 
-router.post("/acceptFriend", async (req, res) => {
+router.post("/friend", async (req, res) => {
   const { sourceId, targetId } = req.body;
   try {
     const source = await User.findById(sourceId);
@@ -185,11 +195,12 @@ router.post("/acceptFriend", async (req, res) => {
 
     return res.send({ id1: source.friends, id2: target.friends });
   } catch (error) {
+    logger.error(error);
     return res.status(500).send({ message: "Server Error" });
   }
 });
 
-router.post("/rejectFriend", async (req, res) => {
+router.delete("/friendRequest", async (req, res) => {
   const { sourceId, targetId } = req.body;
   try {
     const source = await User.findById(sourceId);
@@ -211,11 +222,12 @@ router.post("/rejectFriend", async (req, res) => {
       [targetId]: target.friendRequests,
     });
   } catch (error) {
+    logger.error(error);
     return res.status(500).send({ message: "Server Error" });
   }
 });
 
-router.post("/unfriend", async (req, res) => {
+router.delete("/friend", async (req, res) => {
   const { id1, id2 } = req.body;
   try {
     const user1 = await User.findOneAndUpdate(
@@ -228,7 +240,8 @@ router.post("/unfriend", async (req, res) => {
     );
     res.send({ id1: user1.friends, id2: user2.friends });
   } catch (error) {
-    res.status(500).send({ message: "Server Error" });
+    logger.error(error);
+    return res.status(500).send({ message: "Server Error" });
   }
 });
 
@@ -241,6 +254,7 @@ router.get("/friends/:userId", async (req, res) => {
 
     res.send(friends);
   } catch (error) {
+    logger.error(error);
     return res.status(500).send({ message: "Server Error" });
   }
 });
@@ -254,6 +268,7 @@ router.get("/:id", async (req, res) => {
     }
     res.send(user);
   } catch (error) {
+    logger.error(error);
     return res.status(500).send(error);
   }
 });
@@ -270,6 +285,7 @@ router.get("/", async (req, res) => {
     }
     res.send(user);
   } catch (error) {
+    logger.error(error);
     return res.status(500).send(error);
   }
 });

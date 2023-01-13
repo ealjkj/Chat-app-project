@@ -1,6 +1,6 @@
 const express = require("express");
 const Conversation = require("../models/conversation.model");
-
+const logger = require("../logger");
 const router = express.Router();
 
 router.get("/:id", async (req, res) => {
@@ -12,6 +12,7 @@ router.get("/:id", async (req, res) => {
     }
     res.send(conversation);
   } catch (error) {
+    logger.error(error);
     return res.status(500).send({ message: "Server Error" });
   }
 });
@@ -25,6 +26,7 @@ router.get("/ofUser/:userId", async (req, res) => {
 
     res.send(conversations);
   } catch (error) {
+    logger.error(error);
     return res.status(500).send({ message: "Server Error" });
   }
 });
@@ -34,7 +36,7 @@ router.post("/create", async (req, res) => {
     const conversation = await Conversation.create(req.body);
     return res.send(conversation);
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res.status(500).send(error.message);
   }
 });
@@ -51,7 +53,8 @@ router.delete("/delete/:id", async (req, res) => {
     conversation.remove();
     res.send(conversation);
   } catch (error) {
-    res.status(500).send({ message: "Server Error" });
+    logger.error(error);
+    return res.status(500).send({ message: "Server Error" });
   }
 });
 
@@ -80,8 +83,8 @@ router.put("/addUsers/:id", async (req, res) => {
 
     res.send(updatedConversation);
   } catch (error) {
-    console.log(error);
-    res.send({ message: "Server Error" });
+    logger.error(error);
+    return res.send({ message: "Server Error" });
   }
 });
 
@@ -102,7 +105,8 @@ router.put("/removeUser/:id", async (req, res) => {
     conversation.save();
     res.send(conversation);
   } catch (error) {
-    res.send({ message: "Server Error" });
+    logger.error(error);
+    return res.send({ message: "Server Error" });
   }
 });
 
@@ -127,7 +131,8 @@ router.put("/leaveConversation/:id", async (req, res) => {
 
     res.send(conversation);
   } catch (error) {
-    res.send({ message: "Server Error" });
+    logger.error(error);
+    return res.send({ message: "Server Error" });
   }
 });
 

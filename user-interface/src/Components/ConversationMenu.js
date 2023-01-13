@@ -1,16 +1,16 @@
-import { Menu, MenuItem, ListItemIcon, Modal } from "@mui/material";
+import { Menu, MenuItem, ListItemIcon } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
-import CreateConversationModal from "./CreateConversationModal";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { openModal } from "../slices/modalOpen.slice";
 
 export default function ConversationMenu({ anchorEl, onClose }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const createNewConversation = () => {
-    dispatch({ type: "OPEN_MODAL" });
+    dispatch(openModal());
   };
 
   return (
@@ -32,7 +32,7 @@ export default function ConversationMenu({ anchorEl, onClose }) {
         <ListItemIcon>
           <GroupAddIcon />
         </ListItemIcon>
-        {t("New Conversation")}
+        {t("newConversation")}
       </MenuItem>
     </Menu>
   );

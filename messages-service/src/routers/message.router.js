@@ -1,6 +1,7 @@
 const express = require("express");
 const Message = require("../models/message.model");
 const Conversation = require("../models/conversation.model");
+const logger = require("../logger");
 const router = express.Router();
 
 router.get("/:id", async (req, res) => {
@@ -12,6 +13,7 @@ router.get("/:id", async (req, res) => {
     }
     res.send(message);
   } catch (error) {
+    logger.error(error);
     return res.status(500).send({ message: "Server Error" });
   }
 });
@@ -25,13 +27,13 @@ router.get("/ofConversation/:conversationId", async (req, res) => {
     }
     res.send(message);
   } catch (error) {
+    logger.error(error);
     return res.status(500).send({ message: "Server Error" });
   }
 });
 
 router.post("/create", async (req, res) => {
   try {
-    console.log(req.body);
     const conversation = await Conversation.findById(req.body.conversationId);
 
     if (!conversation) {
@@ -51,7 +53,8 @@ router.post("/create", async (req, res) => {
     await conversation.save();
     res.send(message);
   } catch (error) {
-    res.status(500).send(error.message);
+    logger.error(error);
+    return res.status(500).send(error.message);
   }
 });
 
@@ -67,7 +70,8 @@ router.delete("/delete/:id", async (req, res) => {
     message.remove();
     res.send(message);
   } catch (error) {
-    res.status(500).send({ message: "Server Error" });
+    logger.error(error);
+    return res.status(500).send({ message: "Server Error" });
   }
 });
 

@@ -1,4 +1,4 @@
-import { Stack, List, Box, Typography, Paper } from "@mui/material";
+import { Stack, List, Typography, Paper } from "@mui/material";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useRef } from "react";
@@ -23,7 +23,7 @@ const MessagesSection = () => {
     if (currentConversation !== conversationId) {
       dispatch({ type: "CHANGE_CONVERSATION", payload: { conversationId } });
     }
-  }, [conversationId, currentConversation]);
+  }, [conversationId, currentConversation, dispatch]);
 
   useEffect(() => {
     if (scrolled) {

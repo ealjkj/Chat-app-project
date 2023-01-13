@@ -1,10 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { resetState } from "../actions";
 
 const initialState = [];
 
 const messagesSlice = createSlice({
   name: "messages",
   initialState,
+  extraReducers: (builder) => builder.addCase(resetState, () => initialState),
   reducers: {
     changeMessages(state, action) {
       return action.payload.messages;

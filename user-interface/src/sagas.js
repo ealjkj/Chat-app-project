@@ -8,13 +8,33 @@ import {
   throttle,
 } from "redux-saga/effects";
 import client from "./client";
-import { defaultErrorAlert } from "./actions";
+import { defaultErrorAlert, resetState } from "./actions";
 import i18next from "i18next";
-import { initReactI18next } from "react-i18next";
-import LanguageDetector from "i18next-browser-languagedetector";
-import { getI18nParams } from "./i18n";
 
 // Actions
+import {
+  changeUser,
+  editUser,
+  addFriend as addFriendUser,
+} from "./slices/user.slice";
+import { changeLanguage } from "./slices/language.slice";
+import { changeAlert } from "./slices/alert.slice";
+import { changeSigned } from "./slices/signed.slice";
+import { changeFriends, addFriend } from "./slices/friends.slice";
+import {
+  changeConversations,
+  removeConversation,
+  addConversation,
+  removeParticipant as removeParticipantConv,
+} from "./slices/conversations.slice";
+import { changeMessages } from "./slices/messages.slice";
+import { removeFriendRequest } from "./slices/user.slice";
+import { changeDiscoveredUsers } from "./slices/discoveredUsers.slice";
+import { removeParticipant } from "./slices/participantsToAdd.slice";
+import { changeMessages as changeMessagesCurrentConversation } from "./slices/currentConversation.slice";
+import { changeLoading } from "./slices/loading.slice";
+import { editExistence } from "./slices/existence.slice";
+import { removeFriend } from "./slices/friends.slice";
 
 export function* login(action) {
   const options = {
@@ -51,19 +71,15 @@ export function* login(action) {
     const res = yield call(client.mutate, options);
     const user = res.data.login;
 
-    yield put({ type: "CHANGE_USER", payload: { user } });
+    yield put(changeUser({ user }));
 
-    yield put({
-      type: "CHANGE_LANGUAGE",
-      payload: { language: user?.settings?.language || i18next.language },
-    });
+    yield put(
+      changeLanguage({ language: user?.settings?.language || i18next.language })
+    );
 
-    yield put({ type: "CHANGE_ALERT", payload: { message: null } });
+    yield put(changeAlert({ message: null }));
   } catch (error) {
-    yield put({
-      type: "CHANGE_ALERT",
-      payload: { severity: "error", message: error.message },
-    });
+    yield put(changeAlert({ severity: "error", message: error.message }));
   }
 }
 
@@ -90,20 +106,15 @@ export function* signup(action) {
 
   try {
     yield call(client.mutate, options);
-    yield put({
-      type: "CHANGE_ALERT",
-      payload: {
+    yield put(
+      changeAlert({
         severity: "success",
         message: "Your account was successfully created",
-      },
-    });
-    yield put({ type: "CHANGE_SIGNED", payload: { value: true } });
+      })
+    );
+    yield put(changeSigned({ value: true }));
   } catch (error) {
-    console.error(error);
-    yield put({
-      type: "CHANGE_ALERT",
-      payload: { severity: "error", message: error.message },
-    });
+    yield put(changeAlert({ severity: "error", message: error.message }));
   }
 }
 
@@ -126,25 +137,20 @@ export function* logout(action) {
 
   try {
     yield call(client.mutate, options);
-    yield put({
-      type: "CHANGE_USER",
-      payload: { user: null },
-    });
-    yield put({
-      type: "CHANGE_ALERT",
-      payload: {
+    yield put(resetState());
+    yield put(
+      changeAlert({
         severity: "info",
         message: "You logged out",
-      },
-    });
+      })
+    );
   } catch (error) {
-    yield put({
-      type: "CHANGE_ALERT",
-      payload: {
+    yield put(
+      changeAlert({
         severity: "error",
         message: "Unable to logout, if needed eliminate the cookies",
-      },
-    });
+      })
+    );
   }
 }
 
@@ -195,7 +201,7 @@ export function* queryMoreFriends(action) {
 
   const res = yield call(client.query, options);
   const friends = res.data.friends;
-  yield put({ type: "CHANGE_FRIENDS", payload: { friends } });
+  yield put(changeFriends({ friends }));
 }
 
 export function* watchQueryMoreFriends() {
@@ -239,7 +245,7 @@ export function* queryMoreConversations(action) {
       content: conversation.lastMessage.text,
     },
   }));
-  yield put({ type: "CHANGE_CONVERSATIONS", payload: { conversations } });
+  yield put(changeConversations({ conversations }));
 }
 
 export function* watchQueryMoreConversations() {
@@ -272,10 +278,15 @@ export function* changeConversation(action) {
     content: message.text,
   }));
 
-  yield put({
-    type: "CHANGE_MESSAGES",
-    payload: { messages, conversationId: action.payload.conversationId },
-  });
+  yield put(
+    changeMessages({ messages, conversationId: action.payload.conversationId })
+  );
+  yield put(
+    changeMessagesCurrentConversation({
+      messages,
+      conversationId: action.payload.conversationId,
+    })
+  );
 }
 
 export function* watchChangeConversation() {
@@ -318,10 +329,8 @@ export function* acceptFriend(action) {
     },
   };
   yield call(client.mutate, options);
-  yield put({
-    type: "ADD_FRIEND",
-    payload: { friend: action.payload.friend },
-  });
+  yield put(addFriend({ friend: action.payload.friend }));
+  yield put(addFriendUser({ friend: action.payload.friend }));
 }
 
 export function* watchAcceptFriend() {
@@ -329,7 +338,6 @@ export function* watchAcceptFriend() {
 }
 // -----------------------------------------
 export function* rejectFriend(action) {
-  console.log(action);
   const options = {
     mutation: gql`
       mutation ($friendId: ID) {
@@ -341,10 +349,7 @@ export function* rejectFriend(action) {
     },
   };
   yield call(client.mutate, options);
-  yield put({
-    type: "REMOVE_FRIEND_REQUEST",
-    payload: { friend: action.payload.friend },
-  });
+  yield put(removeFriendRequest({ friend: action.payload.friend }));
 }
 
 export function* watchRejectFriend() {
@@ -375,7 +380,7 @@ export function* discoverUsers(action) {
   };
   const res = yield call(client.query, options);
   const discoveredUsers = res.data.discoveredUsers;
-  yield put({ type: "CHANGE_DISCOVERED_USERS", payload: { discoveredUsers } });
+  yield put(changeDiscoveredUsers({ discoveredUsers }));
 }
 
 export function* watchDiscoverUsers() {
@@ -398,10 +403,9 @@ export function* leaveConversation(action) {
     },
   };
   yield call(client.mutate, options);
-  yield put({
-    type: "REMOVE_CONVERSATION",
-    payload: { conversationId: action.payload.conversationId },
-  });
+  yield put(
+    removeConversation({ conversationId: action.payload.conversationId })
+  );
 }
 
 export function* watchLeaveConversation() {
@@ -439,7 +443,6 @@ export function* queryCreateConversation(action) {
     },
   };
   const res = yield call(client.mutate, options);
-  console.log(res.data.createConversation);
   const conversation = {
     ...res.data.createConversation,
     lastMessage: {
@@ -447,10 +450,7 @@ export function* queryCreateConversation(action) {
       content: res.data.createConversation.lastMessage.text,
     },
   };
-  yield put({
-    type: "ADD_CONVERSATION",
-    payload: { conversation },
-  });
+  yield put(addConversation({ conversation }));
 }
 
 export function* watchQueryCreateConversation() {
@@ -458,7 +458,7 @@ export function* watchQueryCreateConversation() {
 }
 
 // -----------------------------------------
-export function* removeParticipant(action) {
+export function* queryRemoveParticipant(action) {
   const options = {
     mutation: gql`
       mutation ($conversationId: ID, $participantId: ID) {
@@ -474,17 +474,22 @@ export function* removeParticipant(action) {
   };
 
   yield call(client.mutate, options);
-  yield put({
-    type: "REMOVE_PARTICIPANT",
-    payload: {
+  yield put(
+    removeParticipant({
       conversationId: action.payload.conversationId,
       participantId: action.payload.participantId,
-    },
-  });
+    })
+  );
+  yield put(
+    removeParticipantConv({
+      conversationId: action.payload.conversationId,
+      participantId: action.payload.participantId,
+    })
+  );
 }
 
-export function* watchRemoveParticipant() {
-  yield takeEvery("QUERY_REMOVE_PARTICIPANT", removeParticipant);
+export function* watchQueryRemoveParticipant() {
+  yield takeEvery("QUERY_REMOVE_PARTICIPANT", queryRemoveParticipant);
 }
 
 // -----------------------------------------
@@ -528,10 +533,7 @@ export function* queryChangeLanguage(action) {
   };
 
   yield call(client.mutate, options);
-  yield put({
-    type: "CHANGE_LANGUAGE",
-    payload: { language: action.payload.language },
-  });
+  yield put(changeLanguage({ language: action.payload.language }));
 }
 
 export function* watchQueryChangeLanguage() {
@@ -570,12 +572,9 @@ export function* queryUser(action) {
   try {
     const res = yield call(client.query, options);
     const user = res.data.user;
-    yield put({ type: "CHANGE_USER", payload: { user } });
+    yield put(changeUser({ user }));
     const language = user?.settings?.language || i18next.language;
-    yield put({
-      type: "CHANGE_LANGUAGE",
-      payload: { language },
-    });
+    yield put(changeLanguage({ language }));
     yield call(i18next.changeLanguage, language);
   } catch (error) {
     if (error.message !== "NO_TOKEN") {
@@ -583,7 +582,7 @@ export function* queryUser(action) {
       yield put(defaultErrorAlert());
     }
   }
-  yield put({ type: "CHANGE_LOADING", payload: { value: false } });
+  yield put(changeLoading({ value: false }));
 }
 
 export function* watchQueryUser() {
@@ -605,9 +604,8 @@ export function* queryUserExistence(action) {
   try {
     const res = yield call(client.query, options);
     const { username } = res.data.exists;
-    yield put({ type: "EDIT_EXISTENCE", payload: { username } });
+    yield put(editExistence({ username }));
   } catch (error) {
-    console.error(error);
     yield put(defaultErrorAlert());
   }
 }
@@ -632,7 +630,7 @@ export function* queryEmailExistence(action) {
   try {
     const res = yield call(client.query, options);
     const { email } = res.data.exists;
-    yield put({ type: "EDIT_EXISTENCE", payload: { email } });
+    yield put(editExistence({ email }));
   } catch (error) {
     yield put(defaultErrorAlert());
   }
@@ -655,10 +653,7 @@ export function* saveLanguage(action) {
   };
   try {
     yield call(client.mutate, options);
-    yield put({
-      type: "CHANGE_LANGUAGE",
-      payload: { language },
-    });
+    yield put(changeLanguage({ language }));
   } catch (error) {
     yield put(defaultErrorAlert());
   }
@@ -688,7 +683,7 @@ export function* queryFriendRequests(action) {
   try {
     const res = yield call(client.query, options);
     const user = res.data.user;
-    yield put({ type: "EDIT_USER", payload: { user } });
+    yield put(editUser({ user }));
   } catch (error) {
     yield put(defaultErrorAlert());
   }
@@ -713,7 +708,7 @@ export function* queryUnfriend(action) {
   };
   try {
     yield call(client.mutate, options);
-    yield put({ type: "REMOVE_FRIEND", payload: { friendId } });
+    yield put(removeFriend({ friendId }));
   } catch (error) {
     yield put(defaultErrorAlert());
   }
@@ -737,7 +732,7 @@ export default function* rootSaga() {
     watchDiscoverUsers(),
     watchLeaveConversation(),
     watchQueryCreateConversation(),
-    watchRemoveParticipant(),
+    watchQueryRemoveParticipant(),
     watchAddParticipants(),
     watchQueryChangeLanguage(),
     watchQueryFriendRequests(),

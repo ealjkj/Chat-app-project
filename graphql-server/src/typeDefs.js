@@ -5,6 +5,5 @@ const { join } = require("node:path");
 const typeDefs = loadSchemaSync(join(__dirname, "schema.graphql"), {
   loaders: [new GraphQLFileLoader()],
 });
-console.log("hey");
 
 module.exports = typeDefs;

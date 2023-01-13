@@ -3,7 +3,7 @@ import { Stack, List, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import ConnectItem from "./ConnectItem";
-import { useEffect } from "react";
+import { changeSearch } from "../slices/searcher.slice";
 
 const ConnectList = ({ maxHeight = "80vh" }) => {
   const dispatch = useDispatch();
@@ -13,10 +13,7 @@ const ConnectList = ({ maxHeight = "80vh" }) => {
   const { t } = useTranslation();
 
   const handleChange = (event) => {
-    dispatch({
-      type: "CHANGE_SEARCH",
-      payload: { value: event.target.value },
-    });
+    dispatch(changeSearch({ value: event.target.value }));
   };
 
   const handleSubmit = (event) => {
@@ -33,7 +30,7 @@ const ConnectList = ({ maxHeight = "80vh" }) => {
         sx={{ textAlign: "center", padding: 1, fontWeight: 600 }}
         variant="h6"
       >
-        {t("Connect")}
+        {t("connect")}
       </Typography>
       <SearchBar
         onChange={handleChange}

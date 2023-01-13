@@ -1,13 +1,16 @@
-import { Grid, Paper, Stack, Box, Typography } from "@mui/material";
+import { Grid, Paper, Stack } from "@mui/material";
 import FriendsList from "./FriendsList";
 import FriendRequestsList from "./FriendRequestsList";
-import { useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
 import ConnectList from "./ConnectList";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { changeSearch } from "../slices/searcher.slice";
 
 const Contacts = () => {
-  const { t } = useTranslation();
-  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(changeSearch({ value: "" }));
+  }, []);
 
   return (
     <Grid container spacing={2} sx={{ flexGrow: 1 }}>

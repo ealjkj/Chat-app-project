@@ -4,21 +4,17 @@ import {
   ListItemAvatar,
   ListItemText,
   Avatar,
-  IconButton,
   Divider,
-  Chip,
 } from "@mui/material";
 import { useDispatch } from "react-redux";
+import { addParticipant } from "../slices/participantsToAdd.slice";
 
 const FriendToJoinItem = ({ friend }) => {
   const dispatch = useDispatch();
 
   const createHandler = (friend) => {
     return () => {
-      dispatch({
-        type: "ADD_PARTICIPANT",
-        payload: { participant: friend },
-      });
+      dispatch(addParticipant({ participant: friend }));
     };
   };
   return (

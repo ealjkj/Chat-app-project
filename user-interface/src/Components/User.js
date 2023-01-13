@@ -6,10 +6,23 @@ import { Navigate } from "react-router-dom";
 import { gql } from "@apollo/client";
 import { useSubscription } from "@apollo/client";
 import Notifications from "./Notifications";
+import { changeFriendRequestReceived } from "../slices/friendRequestReceived.slice";
+import { changeFriendRequestAccepted } from "../slices/friendRequestAccepted.slice";
 
 const FRIEND_REQUEST_RECEIVED = gql`
   subscription {
     friendRequestSent {
+      _id
+      username
+      firstName
+      lastName
+    }
+  }
+`;
+
+const FRIEND_REQUEST_ACCEPTED = gql`
+  subscription {
+    friendRequestAccepted {
       _id
       username
       firstName
@@ -25,10 +38,15 @@ export default function User() {
   useSubscription(FRIEND_REQUEST_RECEIVED, {
     onData: (args) => {
       const sourceUser = args.data.data.friendRequestSent;
-      dispatch({
-        type: "CHANGE_FRIEND_REQUEST_RECEIVED",
-        payload: { sourceUser },
-      });
+      dispatch(changeFriendRequestReceived({ sourceUser }));
+      dispatch({ type: "QUERY_FRIEND_REQUESTS" });
+    },
+  });
+
+  useSubscription(FRIEND_REQUEST_ACCEPTED, {
+    onData: (args) => {
+      const targetUser = args.data.data.friendRequestAccepted;
+      dispatch(changeFriendRequestAccepted({ targetUser }));
       dispatch({ type: "QUERY_FRIEND_REQUESTS" });
     },
   });

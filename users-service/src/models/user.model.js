@@ -12,16 +12,19 @@ const UserSchema = new Schema({
     unique: true,
     trim: true,
     lowercase: true,
+    maxLength: 20,
   },
   firstName: {
     type: String,
     required: true,
     trim: true,
+    maxLength: 20,
   },
   lastName: {
     type: String,
     required: true,
     trim: true,
+    maxLength: 20,
   },
   email: {
     type: String,
@@ -30,6 +33,7 @@ const UserSchema = new Schema({
     validate: {
       validator: (email) => validator.isEmail(email),
     },
+    maxLength: 40,
   },
   avatar: String,
   friends: [String],

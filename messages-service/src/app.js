@@ -24,5 +24,5 @@ app.use("/message", messagesRouter);
 app.use("/conversation", conversationsRouter);
 
 app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`);
+  logger.info(`App listening on port ${PORT}`);
 });

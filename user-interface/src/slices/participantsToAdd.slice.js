@@ -1,10 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { resetState } from "../actions";
 
 const initialState = [];
 
 const participantsToAddSlice = createSlice({
   name: "participantsToAdd",
   initialState,
+  extraReducers: (builder) => builder.addCase(resetState, () => initialState),
   reducers: {
     addParticipant(state, action) {
       if (

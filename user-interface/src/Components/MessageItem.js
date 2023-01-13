@@ -1,5 +1,5 @@
 import { Box, ListItem, ListItemText, Typography } from "@mui/material";
-import { format, formatDistanceToNow } from "date-fns";
+import { format } from "date-fns";
 import { useSelector } from "react-redux";
 import { Fragment } from "react";
 
@@ -10,7 +10,6 @@ const MessageItem = ({ message }) => {
   const align = message.from === userId ? "flex-end" : "flex-start";
 
   const timeDisplay = (time) => {
-    // console.log(time);
     return format(new Date(time), "p");
   };
 

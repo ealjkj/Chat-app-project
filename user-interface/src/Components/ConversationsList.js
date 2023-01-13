@@ -5,23 +5,30 @@ import { useEffect } from "react";
 
 const ConversationsList = () => {
   const dispatch = useDispatch();
+  const search = useSelector((state) => state.searcher);
   const messages = useSelector((state) => state.messages);
   useEffect(() => {
     dispatch({ type: "QUERY_CONVERSATIONS" });
   }, [messages, dispatch]);
   const conversations = useSelector((state) => state.conversations);
-  // Sort conversations in place
-  const sortedConversations = conversations.sort((conv1, conv2) => {
-    const timeToCompare1 = conv1.lastMessage.createdAt
-      ? conv1.lastMessage.createdAt
-      : conv1.joinedAt;
 
-    const timeToCompare2 = conv2.lastMessage.createdAt
-      ? conv2.lastMessage.createdAt
-      : conv2.joinedAt;
+  const filteredConversations = conversations.filter((conversation) =>
+    conversation.title.toUpperCase().startsWith(search.toUpperCase())
+  );
 
-    return new Date(timeToCompare2) - new Date(timeToCompare1);
-  });
+  const sortedConversations = [...filteredConversations].sort(
+    (conv1, conv2) => {
+      const timeToCompare1 = conv1.lastMessage.createdAt
+        ? conv1.lastMessage.createdAt
+        : conv1.joinedAt;
+
+      const timeToCompare2 = conv2.lastMessage.createdAt
+        ? conv2.lastMessage.createdAt
+        : conv2.joinedAt;
+
+      return new Date(timeToCompare2) - new Date(timeToCompare1);
+    }
+  );
 
   return (
     <Stack>

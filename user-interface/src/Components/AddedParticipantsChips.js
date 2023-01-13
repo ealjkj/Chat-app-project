@@ -1,14 +1,14 @@
-import { Avatar, Box, Chip, ListItem } from "@mui/material";
+import { Avatar, Box, Chip } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
+import { removeParticipant as removeParticipantConv } from "../slices/conversations.slice";
+import { removeParticipant } from "../slices/participantsToAdd.slice";
 
 function AddedParticipantsChips() {
   const dispatch = useDispatch();
   const createDeleter = (participant) => {
     return () => {
-      dispatch({
-        type: "REMOVE_PARTICIPANT",
-        payload: { userId: participant._id },
-      });
+      dispatch(removeParticipant({ userId: participant._id }));
+      dispatch(removeParticipantConv({ userId: participant._id }));
     };
   };
 

@@ -1,16 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
-
+import { resetState } from "../actions";
 const initialState = [];
 
 const conversationsSlice = createSlice({
   name: "conversations",
   initialState,
+  extraReducers: (builder) => builder.addCase(resetState, () => initialState),
   reducers: {
-    changeConversation(state, action) {
+    changeConversations(state, action) {
       return action.payload.conversations;
     },
 
     addConversations(state, action) {
+      return [action.payload.conversation, ...state];
+    },
+
+    addConversation(state, action) {
       return [action.payload.conversation, ...state];
     },
 
@@ -37,8 +42,9 @@ const conversationsSlice = createSlice({
 });
 
 export const {
-  changeConversation,
+  changeConversations,
   addConversations,
+  addConversation,
   removeParticipant,
   removeConversation,
 } = conversationsSlice.actions;

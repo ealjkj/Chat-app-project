@@ -8,6 +8,12 @@ import SearchBar from "./SearchBar";
 import CreateConversationModal from "./CreateConversationModal";
 import DetailsModal from "./DetailsModal";
 import NullConversation from "./NullConversation";
+import { addMessage } from "../slices/messages.slice";
+import { closeModal } from "../slices/modalOpen.slice";
+import { closeDetailsModal } from "../slices/detailsModalOpen.slice";
+import { changeSearch } from "../slices/searcher.slice";
+import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
 
 const MESSAGES_SUBSCRIPTION = gql`
   subscription messageCreated($conversationId: ID!) {
@@ -24,6 +30,7 @@ const MESSAGES_SUBSCRIPTION = gql`
 
 const Conversation = () => {
   const { conversationId } = useParams();
+  const { t } = useTranslation();
   const conversation = useSelector((state) => {
     return state.conversations.find(
       (conversation) => conversation._id === conversationId
@@ -42,13 +49,21 @@ const Conversation = () => {
         ...data.messageCreated,
         content: data.messageCreated.text,
       };
-      dispatch({ type: "ADD_MESSAGE", payload: { message } });
+      dispatch(addMessage({ message }));
     },
   });
 
-  const handleCloseModal = () => dispatch({ type: "CLOSE_MODAL" });
-  const handleCloseDetailsModal = () =>
-    dispatch({ type: "CLOSE_DETAILS_MODAL" });
+  useEffect(() => {
+    dispatch(changeSearch({ value: "" }));
+  }, []);
+
+  const handleCloseModal = () => dispatch(closeModal());
+  const handleCloseDetailsModal = () => dispatch(closeDetailsModal());
+
+  const handleChange = (event) => {
+    dispatch(changeSearch({ value: event.target.value }));
+  };
+
   return (
     <Grid container>
       <Grid
@@ -58,7 +73,12 @@ const Conversation = () => {
           height: "calc( 100vh - 64px)",
         }}
       >
-        <SearchBar height={100} menu={true} label="Search Conversations" />
+        <SearchBar
+          height={100}
+          menu={true}
+          label={t("searchConversations")}
+          onChange={handleChange}
+        />
         <Box
           sx={{
             height: "calc( 100vh - 64px - 100px)",

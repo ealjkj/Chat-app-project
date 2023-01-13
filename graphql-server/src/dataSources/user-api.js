@@ -20,7 +20,7 @@ class UserAPI extends RESTDataSource {
   }
 
   async sendFriendRequest({ sourceId, targetId }) {
-    return this.post(`/user/requestFriendship`, {
+    return this.post(`/user/friendRequest`, {
       body: {
         sourceId,
         targetId,
@@ -35,19 +35,19 @@ class UserAPI extends RESTDataSource {
   }
 
   async acceptFriend({ sourceId, targetId }) {
-    return this.post("/user/acceptFriend", {
+    return this.post("/user/friend", {
       body: { sourceId, targetId },
     });
   }
 
   async rejectFriend({ sourceId, targetId }) {
-    return this.post("/user/rejectFriend", {
+    return this.delete("/user/friendRequest", {
       body: { sourceId, targetId },
     });
   }
 
   async unfriend(userId, friendId) {
-    return this.post(`/user/unfriend`, {
+    return this.delete(`/user/friend`, {
       body: {
         id1: userId,
         id2: friendId,

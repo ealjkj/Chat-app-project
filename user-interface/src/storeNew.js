@@ -11,10 +11,10 @@ import discoveredUsers from "./slices/discoveredUsers.slice";
 import existence from "./slices/existence.slice";
 import extraParticipantsModalOpen from "./slices/extraParticipantsModalOpen.slice";
 import friendRequestReceived from "./slices/friendRequestReceived.slice";
+import friendRequestAccepted from "./slices/friendRequestAccepted.slice";
 import friends from "./slices/friends.slice";
 import language from "./slices/language.slice";
 import loading from "./slices/loading.slice";
-import logged from "./slices/logged.slice";
 import messages from "./slices/messages.slice";
 import modalOpen from "./slices/modalOpen.slice";
 import modalSearcher from "./slices/modalSearcher.slice";
@@ -35,10 +35,10 @@ const store = configureStore({
     existence,
     extraParticipantsModalOpen,
     friendRequestReceived,
+    friendRequestAccepted,
     friends,
     language,
     loading,
-    logged,
     messages,
     modalOpen,
     modalSearcher,

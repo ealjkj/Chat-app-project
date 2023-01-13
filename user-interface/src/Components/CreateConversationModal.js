@@ -3,22 +3,18 @@ import AddToConversationList from "./AddToConversationList";
 import AddedParticipantsChips from "./AddedParticipantsChips.js";
 import SearchBar from "./SearchBar";
 import { useDispatch, useSelector } from "react-redux";
-import { gql, useMutation } from "@apollo/client";
 import { useState } from "react";
-
-const CREATE_CONVERSATION = gql`
-  mutation ($conversationInput: ConversationInput) {
-    createConversation(conversationInput: $conversationInput) {
-      _id
-    }
-  }
-`;
+import { closeModal } from "../slices/modalOpen.slice";
+import { changeModalSearch } from "../slices/modalSearcher.slice";
+import { useTranslation } from "react-i18next";
 
 export default function CreateConversationModal({
   existingConversation = null,
 }) {
-  const [conversationTitle, setConversationTitle] =
-    useState("New Conversation");
+  const { t } = useTranslation();
+  const [conversationTitle, setConversationTitle] = useState(
+    t("newConversation")
+  );
 
   const dispatch = useDispatch();
   const participantsToAdd = useSelector((state) => state.participantsToAdd);
@@ -35,7 +31,7 @@ export default function CreateConversationModal({
     };
 
     dispatch({ type: "CREATE_CONVERSATION", payload: { conversationInput } });
-    dispatch({ type: "CLOSE_MODAL" });
+    dispatch(closeModal());
   };
 
   const handleAddParticipants = () => {
@@ -48,10 +44,7 @@ export default function CreateConversationModal({
     });
   };
   const handleChange = (event) => {
-    dispatch({
-      type: "CHANGE_MODAL_SEARCH",
-      payload: { value: event.target.value },
-    });
+    dispatch(changeModalSearch({ value: event.target.value }));
   };
 
   const handleTitleChange = (event) => {
@@ -85,7 +78,7 @@ export default function CreateConversationModal({
         </Typography>
       )}
       <SearchBar
-        label="Search Friends"
+        label={t("searchFriends")}
         value={modalSearcher}
         menu={false}
         onChange={handleChange}
@@ -99,7 +92,7 @@ export default function CreateConversationModal({
         variant="contained"
         sx={{ width: "50%", alignSelf: "flex-end" }}
       >
-        {existingConversation ? "Add Participants" : "Create conversation"}
+        {existingConversation ? t("addParticipants") : t("createConversation")}
       </Button>
     </Box>
   );

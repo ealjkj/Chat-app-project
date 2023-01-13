@@ -4,17 +4,15 @@ import {
   ListItemAvatar,
   ListItemText,
   Avatar,
-  IconButton,
   Button,
   Divider,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useDispatch, useSelector } from "react-redux";
-// import ChatIcon from "@mui/icons-material/Chat";
-// import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 
 const ParticipantItem = ({ friend, adminView }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const conversationId = useSelector((state) => state.currentConversation);
   const userId = useSelector((state) => state.user._id);
@@ -39,7 +37,7 @@ const ParticipantItem = ({ friend, adminView }) => {
         />
         {adminView && userId !== friend._id ? (
           <Button variant="outlined" onClick={handleRemove}>
-            Remove
+            {t("remove")}
           </Button>
         ) : null}
       </ListItem>

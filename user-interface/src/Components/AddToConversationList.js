@@ -2,11 +2,8 @@ import FriendToJoinItem from "./FriendToJoinItem";
 import { Stack, List } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { useTranslation } from "react-i18next";
 
 const AddToConversationList = ({ notInclude = [] }) => {
-  console.log(notInclude);
-  const { t } = useTranslation();
   const dispatch = useDispatch();
   const hasFriends = useSelector((state) => state.user.friends.length);
   const userId = useSelector((state) => state.user._id);

@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { resetState } from "../actions";
 
 const initialState = {
   username: null,
@@ -8,6 +9,7 @@ const initialState = {
 const discoveredUsersSlice = createSlice({
   name: "existence",
   initialState,
+  extraReducers: (builder) => builder.addCase(resetState, () => initialState),
   reducers: {
     editExistence(state, action) {
       return { ...state, ...action.payload };

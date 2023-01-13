@@ -1,4 +1,3 @@
-import { gql, useMutation } from "@apollo/client";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import {
@@ -9,14 +8,11 @@ import {
   Typography,
   Stack,
   Link,
-  Alert,
-  IconButton,
-  Fade,
 } from "@mui/material";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link as RouterLinK, Navigate } from "react-router-dom";
-import CloseIcon from "@mui/icons-material/Close";
+import { changeSigned } from "../slices/signed.slice";
 
 const Login = () => {
   const { t } = useTranslation();
@@ -24,7 +20,7 @@ const Login = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch({ type: "CHANGE_SIGNED", payload: { value: false } });
+    dispatch(changeSigned({ value: false }));
   }, []);
 
   const [inputs, setInputs] = useState({

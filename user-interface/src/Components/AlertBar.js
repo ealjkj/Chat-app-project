@@ -1,5 +1,6 @@
 import { Fade, Alert } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
+import { changeAlert } from "../slices/alert.slice";
 
 const AlertBar = () => {
   const dispatch = useDispatch();
@@ -9,9 +10,7 @@ const AlertBar = () => {
       <Alert
         severity={alert.severity}
         variant="filled"
-        onClose={() =>
-          dispatch({ type: "CHANGE_ALERT", payload: { message: null } })
-        }
+        onClose={() => dispatch(changeAlert({ message: null }))}
         sx={{
           position: "absolute",
           top: 0,

@@ -59,13 +59,19 @@ const Signup = () => {
       if (value.length < 8)
         return {
           error: true,
-          helperText: "Password should at least 8 characters long",
+          helperText: t("min8char"),
+        };
+
+      if (value.length > 20)
+        return {
+          error: true,
+          helperText: t("max20char"),
         };
 
       if (value.includes(" "))
         return {
           error: true,
-          helperText: "Password should not contain whitespaces",
+          helperText: t("noWhiteSpacesAllowed"),
         };
 
       return { error: false, helperText: "" };
@@ -75,7 +81,7 @@ const Signup = () => {
       if (inputs.password !== value)
         return {
           error: true,
-          helperText: "Passwords should Match",
+          helperText: t("passwordsMustMatch"),
         };
 
       return { error: false, helperText: "" };
@@ -85,7 +91,41 @@ const Signup = () => {
       if (!isEmail(value))
         return {
           error: true,
-          helperText: "Not valid email",
+          helperText: t("emailNotValid"),
+        };
+
+      if (value.length > 40)
+        return {
+          error: true,
+          helperText: t("max40char"),
+        };
+
+      return { error: false, helperText: "" };
+    },
+
+    username: (value) => {
+      if (value.length > 20)
+        return {
+          error: true,
+          helperText: t("max20char"),
+        };
+
+      return { error: false, helperText: "" };
+    },
+    firstName: (value) => {
+      if (value.length > 20)
+        return {
+          error: true,
+          helperText: t("max20char"),
+        };
+
+      return { error: false, helperText: "" };
+    },
+    lastName: (value) => {
+      if (value.length > 20)
+        return {
+          error: true,
+          helperText: t("max20char"),
         };
 
       return { error: false, helperText: "" };
@@ -124,9 +164,13 @@ const Signup = () => {
 
   const emailError = validations.email.error || existence.email;
   const emailHelperText = existence.email
-    ? `Another account has registered this email`
+    ? t("anotherAccountRegistered")
     : validations.email.helperText;
 
+  const usernameError = validations.username.error || existence.username;
+  const usernameHelperText = existence.username
+    ? t("usernameTaken")
+    : validations.username.helperText;
   return (
     <Box
       component="form"
@@ -147,6 +191,8 @@ const Signup = () => {
           </Typography>
           <Stack spacing={2} direction="row" sx={{ width: "100%" }}>
             <TextField
+              error={validations.firstName.error}
+              helperText={validations.firstName.helperText}
               variant="outlined"
               label={t("firstName")}
               name="firstName"
@@ -154,6 +200,8 @@ const Signup = () => {
               onChange={handleChange}
             />
             <TextField
+              error={validations.lastName.error}
+              helperText={validations.lastName.helperText}
               variant="outlined"
               label={t("lastName")}
               name="lastName"
@@ -162,10 +210,8 @@ const Signup = () => {
             />
           </Stack>
           <TextField
-            error={existence.username}
-            helperText={
-              existence.username ? `${inputs.username} already taken` : ""
-            }
+            error={usernameError}
+            helperText={usernameHelperText}
             variant="outlined"
             label={t("username")}
             name="username"
@@ -195,12 +241,8 @@ const Signup = () => {
           />
 
           <TextField
-            // error={existence.email}
             error={emailError}
             helperText={emailHelperText}
-            // helperText={
-            //   existence.email ? `Another account has registered this email` : ""
-            // }
             variant="outlined"
             label={t("email")}
             name="email"

@@ -8,6 +8,7 @@ const UserSchema = new Schema({
     unique: true,
     trim: true,
     lowercase: true,
+    maxLength: 20,
   },
   password: {
     type: String,
