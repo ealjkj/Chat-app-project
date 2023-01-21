@@ -10,10 +10,10 @@ const ConversationsList = () => {
   useEffect(() => {
     dispatch({ type: "QUERY_CONVERSATIONS" });
   }, [messages, dispatch]);
-  const conversations = useSelector((state) => state.conversations);
 
+  const conversations = useSelector((state) => state.conversations);
   const filteredConversations = conversations.filter((conversation) =>
-    conversation.title.toUpperCase().startsWith(search.toUpperCase())
+    conversation.title.toUpperCase().includes(search.toUpperCase())
   );
 
   const sortedConversations = [...filteredConversations].sort(

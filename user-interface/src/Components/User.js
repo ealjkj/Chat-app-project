@@ -31,9 +31,16 @@ const FRIEND_REQUEST_ACCEPTED = gql`
   }
 `;
 
+const FRIEND_REMOVED = gql`
+  subscription {
+    friendRemoved
+  }
+`;
+
 export default function User() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
+  const search = useSelector((state) => state.searcher);
 
   useSubscription(FRIEND_REQUEST_RECEIVED, {
     onData: (args) => {
@@ -48,6 +55,16 @@ export default function User() {
       const targetUser = args.data.data.friendRequestAccepted;
       dispatch(changeFriendRequestAccepted({ targetUser }));
       dispatch({ type: "QUERY_FRIEND_REQUESTS" });
+      dispatch({ type: "QUERY_FRIENDS" });
+      dispatch({ type: "QUERY_CONVERSATIONS" });
+    },
+  });
+
+  useSubscription(FRIEND_REMOVED, {
+    onData: () => {
+      dispatch({ type: "QUERY_FRIENDS" });
+      dispatch({ type: "QUERY_CONVERSATIONS" });
+      dispatch({ type: "DISCOVER_USERS", payload: { search } });
     },
   });
 

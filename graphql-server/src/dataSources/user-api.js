@@ -7,6 +7,10 @@ class UserAPI extends RESTDataSource {
     return this.get(`/user/?username=${encodeURIComponent(username)}`);
   }
 
+  async getFriends(id) {
+    return this.get("/user/friends/" + id);
+  }
+
   async getUser(userId) {
     return this.get(`/user/${userId}`);
   }
@@ -53,6 +57,10 @@ class UserAPI extends RESTDataSource {
         id2: friendId,
       },
     });
+  }
+
+  async search(string) {
+    return this.get("/user/fromSearch?search=" + string);
   }
 
   async exists(params) {

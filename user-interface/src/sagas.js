@@ -12,15 +12,11 @@ import { defaultErrorAlert, resetState } from "./actions";
 import i18next from "i18next";
 
 // Actions
-import {
-  changeUser,
-  editUser,
-  addFriend as addFriendUser,
-} from "./slices/user.slice";
+import { changeUser, editUser } from "./slices/user.slice";
 import { changeLanguage } from "./slices/language.slice";
 import { changeAlert } from "./slices/alert.slice";
 import { changeSigned } from "./slices/signed.slice";
-import { changeFriends, addFriend } from "./slices/friends.slice";
+import { changeFriends } from "./slices/friends.slice";
 import {
   changeConversations,
   removeConversation,
@@ -183,8 +179,8 @@ export function* watchMutateCreateMessage() {
 export function* queryMoreFriends(action) {
   const options = {
     query: gql`
-      query ($userId: ID) {
-        friends(userId: $userId) {
+      query {
+        friends {
           _id
           username
           firstName
@@ -193,9 +189,6 @@ export function* queryMoreFriends(action) {
         }
       }
     `,
-    variables: {
-      userId: action.payload.userId,
-    },
     fetchPolicy: "no-cache",
   };
 
@@ -329,8 +322,8 @@ export function* acceptFriend(action) {
     },
   };
   yield call(client.mutate, options);
-  yield put(addFriend({ friend: action.payload.friend }));
-  yield put(addFriendUser({ friend: action.payload.friend }));
+  yield put({ type: "QUERY_FRIENDS" });
+  yield put({ type: "QUERY_FRIEND_REQUESTS" });
 }
 
 export function* watchAcceptFriend() {
@@ -360,8 +353,8 @@ export function* watchRejectFriend() {
 export function* discoverUsers(action) {
   const options = {
     query: gql`
-      query ($search: String, $myId: ID) {
-        discoveredUsers(search: $search, myId: $myId) {
+      query ($search: String) {
+        discoveredUsers(search: $search) {
           _id
           username
           firstName
@@ -374,7 +367,6 @@ export function* discoverUsers(action) {
     `,
     variables: {
       search: action.payload.search,
-      myId: action.payload.myId,
     },
     fetchPolicy: "no-cache",
   };

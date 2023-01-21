@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import { Link as RouterLinK, Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import isEmail from "validator/lib/isEmail";
+import createValidators from "../signupValidators";
 
 const Signup = () => {
   const { t } = useTranslation();
@@ -54,83 +54,7 @@ const Signup = () => {
     }
   }, [inputs.email, dispatch]);
 
-  const validators = {
-    password: (value) => {
-      if (value.length < 8)
-        return {
-          error: true,
-          helperText: t("min8char"),
-        };
-
-      if (value.length > 20)
-        return {
-          error: true,
-          helperText: t("max20char"),
-        };
-
-      if (value.includes(" "))
-        return {
-          error: true,
-          helperText: t("noWhiteSpacesAllowed"),
-        };
-
-      return { error: false, helperText: "" };
-    },
-
-    passwordConfirm: (value) => {
-      if (inputs.password !== value)
-        return {
-          error: true,
-          helperText: t("passwordsMustMatch"),
-        };
-
-      return { error: false, helperText: "" };
-    },
-
-    email: (value) => {
-      if (!isEmail(value))
-        return {
-          error: true,
-          helperText: t("emailNotValid"),
-        };
-
-      if (value.length > 40)
-        return {
-          error: true,
-          helperText: t("max40char"),
-        };
-
-      return { error: false, helperText: "" };
-    },
-
-    username: (value) => {
-      if (value.length > 20)
-        return {
-          error: true,
-          helperText: t("max20char"),
-        };
-
-      return { error: false, helperText: "" };
-    },
-    firstName: (value) => {
-      if (value.length > 20)
-        return {
-          error: true,
-          helperText: t("max20char"),
-        };
-
-      return { error: false, helperText: "" };
-    },
-    lastName: (value) => {
-      if (value.length > 20)
-        return {
-          error: true,
-          helperText: t("max20char"),
-        };
-
-      return { error: false, helperText: "" };
-    },
-  };
+  const validators = createValidators(inputs, t);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -171,6 +95,15 @@ const Signup = () => {
   const usernameHelperText = existence.username
     ? t("usernameTaken")
     : validations.username.helperText;
+
+  const passwordsDontMatch =
+    inputs.passwordConfirm !== "" && inputs.password !== inputs.passwordConfirm;
+  const passwordConfirmError =
+    validations.confirmPasswordError || passwordsDontMatch;
+  const passwordConfirmHelperText = passwordsDontMatch
+    ? t("passwordsMustMatch")
+    : validations.passwordConfirm.helperText;
+
   return (
     <Box
       component="form"
@@ -230,8 +163,8 @@ const Signup = () => {
             onChange={handleChange}
           />
           <TextField
-            error={validations.passwordConfirm.error}
-            helperText={validations.passwordConfirm.helperText}
+            error={passwordConfirmError}
+            helperText={passwordConfirmHelperText}
             variant="outlined"
             label={t("confirmPassword")}
             name="passwordConfirm"

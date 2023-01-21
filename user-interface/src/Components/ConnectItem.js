@@ -6,30 +6,40 @@ import {
   Avatar,
   IconButton,
   Divider,
+  Typography,
 } from "@mui/material";
 
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import { useDispatch, useSelector } from "react-redux";
-import { useState } from "react";
 
 const ConnectItem = ({ user }) => {
   const dispatch = useDispatch();
   const friends = useSelector((state) => state.user.friends);
   const userId = useSelector((state) => state.user._id);
+  const searcher = useSelector((state) => state.searcher);
   const sendFriendRequest = () => {
     if (user.requestSent) return;
     dispatch({ type: "SEND_FRIEND_REQUEST", payload: { user, myId: userId } });
-    setColor("primary");
+    dispatch({ type: "DISCOVER_USERS", payload: { search: searcher } });
   };
 
-  let initialColor = "default";
+  const AddButton = () => {
+    return (
+      <IconButton onClick={sendFriendRequest}>
+        <PersonAddIcon />
+      </IconButton>
+    );
+  };
+
+  let AddTextOrButton = AddButton;
   if (friends.includes(user._id)) {
-    initialColor = "success";
+    AddTextOrButton = () => <Typography>Friends</Typography>;
   } else {
-    initialColor = user.requestSent ? "primary" : "default";
+    AddTextOrButton = user.requestSent
+      ? () => <Typography>Request Sent</Typography>
+      : AddButton;
   }
 
-  const [color, setColor] = useState(initialColor);
   return (
     <Box>
       <ListItem>
@@ -41,11 +51,7 @@ const ConnectItem = ({ user }) => {
           primary={user.firstName + " " + user.lastName}
           secondary={user.email}
         />
-        {userId === user._id ? null : (
-          <IconButton onClick={sendFriendRequest} color={color}>
-            <PersonAddIcon />
-          </IconButton>
-        )}
+        <AddTextOrButton />
       </ListItem>
       <Divider />
     </Box>

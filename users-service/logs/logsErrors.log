@@ -1,0 +1,39 @@
+{
+  level: 'error',
+  message: 'E11000 duplicate key error collection: users-db.users index: username_1 dup key: { username: "karina" }',
+  metadata: {
+    index: 0,
+    code: 11000,
+    keyPattern: { username: 1 },
+    keyValue: { username: 'karina' },
+    timestamp: '2023-01-18T12:17:18.746Z'
+  },
+  [Symbol(errorLabels)]: Set(0) {}
+}
+{
+  level: 'error',
+  message: 'HTTP POST /user/create',
+  metadata: {
+    meta: {
+      req: {
+        url: '/user/create',
+        headers: {
+          'content-type': 'application/json',
+          accept: '*/*',
+          'content-length': '86',
+          'user-agent': 'node-fetch/1.0 (+https://github.com/bitinn/node-fetch)',
+          'accept-encoding': 'gzip,deflate',
+          connection: 'close',
+          host: 'localhost:4000'
+        },
+        method: 'POST',
+        httpVersion: '1.1',
+        originalUrl: '/user/create',
+        query: {}
+      },
+      res: { statusCode: 500 },
+      responseTime: 26
+    },
+    timestamp: '2023-01-18T12:17:18.755Z'
+  }
+}

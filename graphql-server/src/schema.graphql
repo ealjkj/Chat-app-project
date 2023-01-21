@@ -110,10 +110,10 @@ type Mutation {
 type Query {
   user: User!
   friendRequests: [User]
-  friends(userId: ID): [User]
+  friends: [User]
   conversations: [Conversation]
   messages(conversationId: ID): [Message]
-  discoveredUsers(search: String, myId: ID): [User]
+  discoveredUsers(search: String): [User]
   conversation(conversationId: ID): Conversation
   exists(username: String, email: String): Existence
 }
@@ -122,4 +122,5 @@ type Subscription {
   messageCreated(conversationId: ID): Message
   friendRequestSent(targetId: ID): User
   friendRequestAccepted(sourceId: ID): User
+  friendRemoved(friendId: ID): ID
 }

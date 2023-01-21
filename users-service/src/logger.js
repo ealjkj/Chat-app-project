@@ -5,11 +5,11 @@ const logger = createLogger({
     new transports.Console(),
     new transports.File({
       level: "warn",
-      filename: "../logs/logsWarnings.log",
+      filename: "./logs/logsWarnings.log",
     }),
     new transports.File({
       level: "error",
-      filename: "../logs/logsErrors.log",
+      filename: "./logs/logsErrors.log",
     }),
   ],
 

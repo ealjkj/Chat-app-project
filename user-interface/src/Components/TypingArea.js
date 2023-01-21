@@ -16,7 +16,9 @@ const TypingArea = () => {
   const { conversationId } = useParams();
 
   const handleChange = (event) => {
-    setMessage(event.target.value);
+    if (event.target.value.length < 200) {
+      setMessage(event.target.value);
+    }
   };
 
   const handleSubmit = (event) => {

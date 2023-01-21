@@ -6,13 +6,11 @@ import { useTranslation } from "react-i18next";
 
 const FriendsList = ({ maxHeight = "80vh" }) => {
   const dispatch = useDispatch();
-  const hasFriends = useSelector((state) => state.user.friends.length);
-  const userId = useSelector((state) => state.user._id);
   const friends = useSelector((state) => state.friends);
   const { t } = useTranslation();
 
   useEffect(() => {
-    dispatch({ type: "QUERY_FRIENDS", payload: { userId } });
+    dispatch({ type: "QUERY_FRIENDS" });
   }, []);
 
   return (

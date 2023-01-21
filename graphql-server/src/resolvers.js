@@ -196,21 +196,25 @@ const resolvers = {
       { friendshipInput },
       { user, dataSources }
     ) => {
-      const { friendId } = friendshipInput;
+      try {
+        const { friendId } = friendshipInput;
 
-      const friendRequest = {
-        sourceId: user.userId,
-        targetId: friendId,
-      };
+        const friendRequest = {
+          sourceId: user.userId,
+          targetId: friendId,
+        };
 
-      const sourceUser = await dataSources.userAPI.getUser(user.userId);
-      await dataSources.userAPI.sendFriendRequest(friendRequest);
+        const sourceUser = await dataSources.userAPI.getUser(user.userId);
+        await dataSources.userAPI.sendFriendRequest(friendRequest);
 
-      pubsub.publish(`FRIEND_REQUEST_SENT:${friendId}`, {
-        friendRequestSent: sourceUser,
-      });
+        pubsub.publish(`FRIEND_REQUEST_SENT:${friendId}`, {
+          friendRequestSent: sourceUser,
+        });
 
-      return friendId;
+        return friendId;
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     acceptFriend: async (parent, { friendId }, { dataSources, user }) => {
@@ -256,8 +260,30 @@ const resolvers = {
     },
 
     unfriend: async (parent, { friendId }, { user, dataSources }) => {
-      await dataSources.userAPI.unfriend(user.userId, friendId);
-      return friendId;
+      try {
+        await dataSources.userAPI.unfriend(user.userId, friendId);
+
+        const conversations =
+          await dataSources.messagesAPI.getConversationsFromUser(user.userId);
+
+        const oneOnOneConversations = conversations.filter(
+          (conversation) => conversation.isOneOnOne
+        );
+
+        const conv = oneOnOneConversations.find((conversation) =>
+          conversation.members.some((member) => member.userId === friendId)
+        );
+
+        await dataSources.messagesAPI.deleteConversation(conv._id);
+
+        pubsub.publish(`FRIEND_REMOVED:${friendId}`, {
+          friendRemoved: friendId,
+        });
+
+        return friendId;
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     leaveConversation: async (parent, { myId, conversationId }) => {
@@ -310,9 +336,7 @@ const resolvers = {
         (_, __, { user }) => {
           return pubsub.asyncIterator([`FRIEND_REQUEST_SENT:${user.userId}`]);
         },
-        ({ friendRequestSent }, { targetId }, { user }) => {
-          return true;
-        }
+        () => true
       ),
     },
     friendRequestAccepted: {
@@ -322,9 +346,15 @@ const resolvers = {
             `FRIEND_REQUEST_ACCEPTED:${user.userId}`,
           ]);
         },
-        ({ friendRequestSent }, { targetId }) => {
-          return true;
-        }
+        () => true
+      ),
+    },
+    friendRemoved: {
+      subscribe: withFilter(
+        (_, __, { user }) => {
+          return pubsub.asyncIterator([`FRIEND_REMOVED:${user.userId}`]);
+        },
+        () => true
       ),
     },
   },
@@ -356,9 +386,8 @@ const resolvers = {
 
       return conversation;
     },
-    friends: async (parent, { userId }) => {
-      const { data } = await axios.get(USER_API + "/user/friends/" + userId);
-      return data;
+    friends: async (parent, context, { user, dataSources }) => {
+      return await dataSources.userAPI.getFriends(user.userId);
     },
     messages: async (parent, { conversationId }) => {
       const { data } = await axios.get(
@@ -374,15 +403,25 @@ const resolvers = {
 
       return conversations;
     },
-    discoveredUsers: async (parent, { search, myId }) => {
-      const { data } = await axios.get(
-        USER_API + "/user/fromSearch?search=" + search
-      );
-      const results = data.map((user) => ({
-        ...user,
-        requestSent: user.friendRequests.includes(myId),
-      }));
-      return results;
+    discoveredUsers: async (parent, { search }, { dataSources, user }) => {
+      try {
+        const data = await dataSources.userAPI.search(search);
+        const me = await dataSources.userAPI.getUser(user.userId);
+        const results = data
+          .map((contact) => ({
+            ...contact,
+            requestSent: contact.friendRequests.includes(me._id),
+          }))
+          .filter(
+            (contact) =>
+              contact._id !== me._id &&
+              !me.friendRequests.some((user) => user._id === contact._id)
+          );
+
+        return results;
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
 };

@@ -61,8 +61,28 @@ router.put("/editSettings/:userId", async (req, res) => {
 
 router.get("/fromSearch", async (req, res) => {
   const { search } = req.query;
-  const regexp = new RegExp(`^${search}`);
+  const specialCharacters = [
+    ".",
+    "+",
+    "*",
+    "?",
+    "^",
+    "$",
+    "(",
+    ")",
+    "[",
+    "]",
+    "{",
+    "}",
+    "|",
+    "\\",
+  ];
+
   try {
+    const fixedRegex = Array.from(search)
+      .map((c) => (specialCharacters.includes(c) ? `\\${c}` : c))
+      .join("");
+    const regexp = new RegExp(`^${fixedRegex}`);
     const users = await User.find({ email: regexp });
     if (!users) {
       return res.status(404).send({ message: "User not Found" });

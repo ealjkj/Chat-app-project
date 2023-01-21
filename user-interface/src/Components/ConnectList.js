@@ -8,7 +8,6 @@ import { changeSearch } from "../slices/searcher.slice";
 const ConnectList = ({ maxHeight = "80vh" }) => {
   const dispatch = useDispatch();
   const searcher = useSelector((state) => state.searcher);
-  const userId = useSelector((state) => state.user._id);
   const discoveredUsers = useSelector((state) => state.discoveredUsers);
   const { t } = useTranslation();
 
@@ -20,7 +19,7 @@ const ConnectList = ({ maxHeight = "80vh" }) => {
     event.preventDefault();
     dispatch({
       type: "DISCOVER_USERS",
-      payload: { search: searcher, myId: userId },
+      payload: { search: searcher },
     });
   };
 

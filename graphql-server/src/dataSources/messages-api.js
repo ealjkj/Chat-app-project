@@ -10,6 +10,10 @@ class MessagesAPI extends RESTDataSource {
     });
   }
 
+  async deleteConversation(id) {
+    return this.delete(`/conversation/${id}`);
+  }
+
   async getConversation(id) {
     return this.get(`/conversation/${id}`);
   }
