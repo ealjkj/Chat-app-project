@@ -47,6 +47,7 @@ export default function User() {
       const sourceUser = args.data.data.friendRequestSent;
       dispatch(changeFriendRequestReceived({ sourceUser }));
       dispatch({ type: "QUERY_FRIEND_REQUESTS" });
+      dispatch({ type: "DISCOVER_USERS", payload: { search } });
     },
   });
 
@@ -64,7 +65,6 @@ export default function User() {
     onData: () => {
       dispatch({ type: "QUERY_FRIENDS" });
       dispatch({ type: "QUERY_CONVERSATIONS" });
-      dispatch({ type: "DISCOVER_USERS", payload: { search } });
     },
   });
 

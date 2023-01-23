@@ -21,14 +21,24 @@ const AuthAPI = require("./dataSources/auth-api");
 const UserAPI = require("./dataSources/user-api");
 const MessagesAPI = require("./dataSources/messages-api");
 
+// Winston
+const expressWinston = require("express-winston");
+const logger = require("./logger");
+
 async function run() {
   // Schema
   const schema = makeExecutableSchema({ typeDefs, resolvers });
 
   // Create App
   const app = express();
-  const httpServer = createServer(app);
+  app.use(
+    expressWinston.logger({
+      winstonInstance: logger,
+      statusLevels: true,
+    })
+  );
 
+  const httpServer = createServer(app);
   const wsServer = new WebSocketServer({
     server: httpServer,
     path: "/graphql",

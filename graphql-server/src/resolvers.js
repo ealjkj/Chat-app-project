@@ -1,8 +1,9 @@
 const { GraphQLError } = require("graphql");
 const { PubSub, withFilter } = require("graphql-subscriptions");
 const axios = require("axios");
+const logger = require("./logger");
+const winston = require("winston/lib/winston/config");
 
-const USER_API = process.env.USER_API;
 const MESSAGES_API = process.env.MESSAGES_API;
 
 const pubsub = new PubSub();
@@ -213,7 +214,7 @@ const resolvers = {
 
         return friendId;
       } catch (error) {
-        console.log(error);
+        logger.error(error);
       }
     },
 
@@ -282,7 +283,7 @@ const resolvers = {
 
         return friendId;
       } catch (error) {
-        console.log(error);
+        logger.error(error);
       }
     },
 
@@ -420,7 +421,7 @@ const resolvers = {
 
         return results;
       } catch (error) {
-        console.log(error);
+        logger.error(error);
       }
     },
   },

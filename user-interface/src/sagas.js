@@ -10,6 +10,7 @@ import {
 import client from "./client";
 import { defaultErrorAlert, resetState } from "./actions";
 import i18next from "i18next";
+import store from "./storeNew";
 
 // Actions
 import { changeUser, editUser } from "./slices/user.slice";
@@ -195,6 +196,10 @@ export function* queryMoreFriends(action) {
   const res = yield call(client.query, options);
   const friends = res.data.friends;
   yield put(changeFriends({ friends }));
+  yield put({
+    type: "DISCOVER_USERS",
+    payload: { search: store.getState().searcher },
+  });
 }
 
 export function* watchQueryMoreFriends() {

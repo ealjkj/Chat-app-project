@@ -8,6 +8,7 @@ import { changeSearch } from "../slices/searcher.slice";
 const ConnectList = ({ maxHeight = "80vh" }) => {
   const dispatch = useDispatch();
   const searcher = useSelector((state) => state.searcher);
+  const friends = useSelector((state) => state.friends);
   const discoveredUsers = useSelector((state) => state.discoveredUsers);
   const { t } = useTranslation();
 

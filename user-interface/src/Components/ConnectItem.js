@@ -14,13 +14,15 @@ import { useDispatch, useSelector } from "react-redux";
 
 const ConnectItem = ({ user }) => {
   const dispatch = useDispatch();
-  const friends = useSelector((state) => state.user.friends);
+  const friends = useSelector((state) => state.friends);
   const userId = useSelector((state) => state.user._id);
   const searcher = useSelector((state) => state.searcher);
+
   const sendFriendRequest = () => {
     if (user.requestSent) return;
     dispatch({ type: "SEND_FRIEND_REQUEST", payload: { user, myId: userId } });
-    dispatch({ type: "DISCOVER_USERS", payload: { search: searcher } });
+    dispatch({ type: "QUERY_FRIENDS" });
+    // dispatch({ type: "DISCOVER_USERS", payload: { search: searcher } });
   };
 
   const AddButton = () => {
@@ -32,7 +34,7 @@ const ConnectItem = ({ user }) => {
   };
 
   let AddTextOrButton = AddButton;
-  if (friends.includes(user._id)) {
+  if (friends.some((friend) => friend._id === user._id)) {
     AddTextOrButton = () => <Typography>Friends</Typography>;
   } else {
     AddTextOrButton = user.requestSent

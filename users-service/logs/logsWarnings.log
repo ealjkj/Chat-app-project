@@ -658,3 +658,138 @@
     timestamp: '2023-01-19T12:09:09.365Z'
   }
 }
+{
+  level: 'warn',
+  message: 'HTTP POST /user/friendRequest',
+  metadata: {
+    meta: {
+      req: {
+        url: '/user/friendRequest',
+        headers: {
+          'content-type': 'application/json',
+          accept: '*/*',
+          'content-length': '77',
+          'user-agent': 'node-fetch/1.0 (+https://github.com/bitinn/node-fetch)',
+          'accept-encoding': 'gzip,deflate',
+          connection: 'close',
+          host: 'localhost:4000'
+        },
+        method: 'POST',
+        httpVersion: '1.1',
+        originalUrl: '/user/friendRequest',
+        query: {}
+      },
+      res: { statusCode: 400 },
+      responseTime: 11
+    },
+    timestamp: '2023-01-23T19:19:35.273Z'
+  }
+}
+{
+  level: 'warn',
+  message: 'HTTP POST /user/friendRequest',
+  metadata: {
+    meta: {
+      req: {
+        url: '/user/friendRequest',
+        headers: {
+          'content-type': 'application/json',
+          accept: '*/*',
+          'content-length': '77',
+          'user-agent': 'node-fetch/1.0 (+https://github.com/bitinn/node-fetch)',
+          'accept-encoding': 'gzip,deflate',
+          connection: 'close',
+          host: 'localhost:4000'
+        },
+        method: 'POST',
+        httpVersion: '1.1',
+        originalUrl: '/user/friendRequest',
+        query: {}
+      },
+      res: { statusCode: 400 },
+      responseTime: 9
+    },
+    timestamp: '2023-01-23T19:21:14.712Z'
+  }
+}
+{
+  level: 'warn',
+  message: 'HTTP POST /user/friendRequest',
+  metadata: {
+    meta: {
+      req: {
+        url: '/user/friendRequest',
+        headers: {
+          'content-type': 'application/json',
+          accept: '*/*',
+          'content-length': '77',
+          'user-agent': 'node-fetch/1.0 (+https://github.com/bitinn/node-fetch)',
+          'accept-encoding': 'gzip,deflate',
+          connection: 'close',
+          host: 'localhost:4000'
+        },
+        method: 'POST',
+        httpVersion: '1.1',
+        originalUrl: '/user/friendRequest',
+        query: {}
+      },
+      res: { statusCode: 400 },
+      responseTime: 4
+    },
+    timestamp: '2023-01-23T19:30:38.832Z'
+  }
+}
+{
+  level: 'warn',
+  message: 'HTTP POST /user/friendRequest',
+  metadata: {
+    meta: {
+      req: {
+        url: '/user/friendRequest',
+        headers: {
+          'content-type': 'application/json',
+          accept: '*/*',
+          'content-length': '77',
+          'user-agent': 'node-fetch/1.0 (+https://github.com/bitinn/node-fetch)',
+          'accept-encoding': 'gzip,deflate',
+          connection: 'close',
+          host: 'localhost:4000'
+        },
+        method: 'POST',
+        httpVersion: '1.1',
+        originalUrl: '/user/friendRequest',
+        query: {}
+      },
+      res: { statusCode: 400 },
+      responseTime: 4
+    },
+    timestamp: '2023-01-23T19:30:51.696Z'
+  }
+}
+{
+  level: 'warn',
+  message: 'HTTP POST /user/friendRequest',
+  metadata: {
+    meta: {
+      req: {
+        url: '/user/friendRequest',
+        headers: {
+          'content-type': 'application/json',
+          accept: '*/*',
+          'content-length': '77',
+          'user-agent': 'node-fetch/1.0 (+https://github.com/bitinn/node-fetch)',
+          'accept-encoding': 'gzip,deflate',
+          connection: 'close',
+          host: 'localhost:4000'
+        },
+        method: 'POST',
+        httpVersion: '1.1',
+        originalUrl: '/user/friendRequest',
+        query: {}
+      },
+      res: { statusCode: 400 },
+      responseTime: 4
+    },
+    timestamp: '2023-01-23T19:30:51.975Z'
+  }
+}
