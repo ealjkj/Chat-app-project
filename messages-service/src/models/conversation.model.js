@@ -17,6 +17,7 @@ const ConversationSchema = new Schema({
   title: {
     type: String,
     trim: true,
+    maxLength: 40,
   },
   isOneOnOne: {
     type: Boolean,

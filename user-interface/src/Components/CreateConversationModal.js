@@ -3,18 +3,17 @@ import AddToConversationList from "./AddToConversationList";
 import AddedParticipantsChips from "./AddedParticipantsChips.js";
 import SearchBar from "./SearchBar";
 import { useDispatch, useSelector } from "react-redux";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { closeModal } from "../slices/modalOpen.slice";
 import { changeModalSearch } from "../slices/modalSearcher.slice";
 import { useTranslation } from "react-i18next";
+import { reset } from "../slices/participantsToAdd.slice";
 
 export default function CreateConversationModal({
   existingConversation = null,
 }) {
   const { t } = useTranslation();
-  const [conversationTitle, setConversationTitle] = useState(
-    t("newConversation")
-  );
+  const [conversationTitle, setConversationTitle] = useState("");
 
   const dispatch = useDispatch();
   const participantsToAdd = useSelector((state) => state.participantsToAdd);
@@ -32,6 +31,7 @@ export default function CreateConversationModal({
 
     dispatch({ type: "CREATE_CONVERSATION", payload: { conversationInput } });
     dispatch(closeModal());
+    dispatch(reset());
   };
 
   const handleAddParticipants = () => {
@@ -48,8 +48,16 @@ export default function CreateConversationModal({
   };
 
   const handleTitleChange = (event) => {
-    setConversationTitle(event.target.value);
+    if (event.target.value.length < 40) {
+      setConversationTitle(event.target.value);
+    }
   };
+
+  const inputEl = useRef(null);
+
+  useEffect(() => {
+    inputEl.current.focus();
+  }, []);
 
   return (
     <Box
@@ -68,9 +76,18 @@ export default function CreateConversationModal({
     >
       {!existingConversation ? (
         <InputBase
+          value={conversationTitle}
+          inputRef={inputEl}
+          autoFocus={true}
           onChange={handleTitleChange}
-          defaultValue={conversationTitle}
-          sx={{ fontWeight: 600, fontSize: 24 }}
+          placeholder={t("newConversation")}
+          inputProps={{ autoFocus: true }}
+          sx={{
+            fontWeight: 600,
+            fontSize: 24,
+            width: "50%",
+            marginBottom: "1rem",
+          }}
         />
       ) : (
         <Typography sx={{ fontWeight: 600, fontSize: 24 }}>

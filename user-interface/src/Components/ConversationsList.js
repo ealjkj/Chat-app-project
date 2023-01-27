@@ -8,7 +8,10 @@ const ConversationsList = () => {
   const search = useSelector((state) => state.searcher);
   const messages = useSelector((state) => state.messages);
   useEffect(() => {
-    dispatch({ type: "QUERY_CONVERSATIONS" });
+    dispatch({
+      type: "QUERY_CONVERSATIONS",
+      payload: { fetchPolicy: "cache-first" },
+    });
   }, [messages, dispatch]);
 
   const conversations = useSelector((state) => state.conversations);

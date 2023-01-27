@@ -5,11 +5,15 @@ import ConnectList from "./ConnectList";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { changeSearch } from "../slices/searcher.slice";
+import { changeDiscoveredUsers } from "../slices/discoveredUsers.slice";
 
 const Contacts = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(changeSearch({ value: "" }));
+    return () => {
+      dispatch(changeDiscoveredUsers({ discoveredUsers: [] }));
+    };
   }, []);
 
   return (

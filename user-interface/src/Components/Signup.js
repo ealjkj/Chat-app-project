@@ -76,6 +76,11 @@ const Signup = () => {
     }
   };
 
+  let hasBlankInput = false;
+  for (let input in inputs) {
+    if (inputs[input] === "") hasBlankInput = true;
+  }
+
   const validSubmit =
     !validations.firstName.error &&
     !validations.lastName.error &&
@@ -85,6 +90,8 @@ const Signup = () => {
     !validations.email.error &&
     !existence.username &&
     !existence.email;
+
+  const disableButton = hasBlankInput || !validSubmit;
 
   const emailError = validations.email.error || existence.email;
   const emailHelperText = existence.email
@@ -184,7 +191,7 @@ const Signup = () => {
             onChange={handleChange}
           />
 
-          <Button variant="contained" type="submit" disabled={!validSubmit}>
+          <Button variant="contained" type="submit" disabled={disableButton}>
             {" "}
             {t("createAccount")}{" "}
           </Button>

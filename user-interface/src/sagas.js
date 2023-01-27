@@ -135,6 +135,7 @@ export function* logout(action) {
   try {
     yield call(client.mutate, options);
     yield put(resetState());
+    yield call(client.resetStore);
     yield put(
       changeAlert({
         severity: "info",
@@ -178,6 +179,7 @@ export function* watchMutateCreateMessage() {
 }
 
 export function* queryMoreFriends(action) {
+  const fetchPolicy = action?.payload?.fetchPolicy || "network-only";
   const options = {
     query: gql`
       query {
@@ -190,7 +192,7 @@ export function* queryMoreFriends(action) {
         }
       }
     `,
-    fetchPolicy: "no-cache",
+    fetchPolicy,
   };
 
   const res = yield call(client.query, options);
@@ -207,6 +209,7 @@ export function* watchQueryMoreFriends() {
 }
 
 export function* queryMoreConversations(action) {
+  const fetchPolicy = action?.payload?.fetchPolicy || "network-only";
   const options = {
     query: gql`
       query {
@@ -232,7 +235,7 @@ export function* queryMoreConversations(action) {
         }
       }
     `,
-    fetchPolicy: "no-cache",
+    fetchPolicy,
   };
 
   const res = yield call(client.query, options);
@@ -243,6 +246,7 @@ export function* queryMoreConversations(action) {
       content: conversation.lastMessage.text,
     },
   }));
+
   yield put(changeConversations({ conversations }));
 }
 
@@ -267,7 +271,7 @@ export function* changeConversation(action) {
     variables: {
       conversationId: action.payload.conversationId,
     },
-    fetchPolicy: "no-cache",
+    fetchPolicy: "network-only",
   };
 
   const res = yield call(client.query, messageOptions);
@@ -356,6 +360,8 @@ export function* watchRejectFriend() {
 
 //-----------------------------------------------
 export function* discoverUsers(action) {
+  if (action.payload.search === "") return;
+
   const options = {
     query: gql`
       query ($search: String) {
@@ -373,7 +379,7 @@ export function* discoverUsers(action) {
     variables: {
       search: action.payload.search,
     },
-    fetchPolicy: "no-cache",
+    fetchPolicy: "network-only",
   };
   const res = yield call(client.query, options);
   const discoveredUsers = res.data.discoveredUsers;
@@ -388,15 +394,12 @@ export function* watchDiscoverUsers() {
 export function* leaveConversation(action) {
   const options = {
     mutation: gql`
-      mutation ($myId: ID, $conversationId: ID) {
-        leaveConversation(myId: $myId, conversationId: $conversationId)
+      mutation ($conversationId: ID) {
+        leaveConversation(conversationId: $conversationId)
       }
     `,
     variables: {
-      friendshipInput: {
-        myId: action.payload.myId,
-        conversationId: action.payload.conversationId,
-      },
+      conversationId: action.payload.conversationId,
     },
   };
   yield call(client.mutate, options);
@@ -661,6 +664,7 @@ export function* watchSaveLanguage() {
 // ---------------
 //-----------------------------------------------
 export function* queryFriendRequests(action) {
+  const fetchPolicy = action?.payload?.fetchPolicy || "network-only";
   const options = {
     query: gql`
       query {
@@ -675,7 +679,7 @@ export function* queryFriendRequests(action) {
         }
       }
     `,
-    fetchPolicy: "no-cache",
+    fetchPolicy,
   };
   try {
     const res = yield call(client.query, options);

@@ -8,6 +8,7 @@ import { useSubscription } from "@apollo/client";
 import Notifications from "./Notifications";
 import { changeFriendRequestReceived } from "../slices/friendRequestReceived.slice";
 import { changeFriendRequestAccepted } from "../slices/friendRequestAccepted.slice";
+import { addMessage } from "../slices/messages.slice";
 
 const FRIEND_REQUEST_RECEIVED = gql`
   subscription {
@@ -37,17 +38,52 @@ const FRIEND_REMOVED = gql`
   }
 `;
 
+const ADDED_TO_CONVERSATION = gql`
+  subscription {
+    addedToConversation {
+      _id
+    }
+  }
+`;
+
+const REMOVED_FROM_CONVERSATION = gql`
+  subscription {
+    removedFromConversation
+  }
+`;
+
+const MESSAGES_SUBSCRIPTION = gql`
+  subscription messageCreated {
+    messageCreated {
+      _id
+      from
+      text
+      conversationId
+      authorName
+      createdAt
+    }
+  }
+`;
+
 export default function User() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
   const search = useSelector((state) => state.searcher);
+  const currentConversationId = useSelector(
+    (state) => state.currentConversation
+  );
 
   useSubscription(FRIEND_REQUEST_RECEIVED, {
     onData: (args) => {
       const sourceUser = args.data.data.friendRequestSent;
       dispatch(changeFriendRequestReceived({ sourceUser }));
-      dispatch({ type: "QUERY_FRIEND_REQUESTS" });
-      dispatch({ type: "DISCOVER_USERS", payload: { search } });
+      dispatch({
+        type: "QUERY_FRIEND_REQUESTS",
+      });
+      dispatch({
+        type: "DISCOVER_USERS",
+        payload: { search },
+      });
     },
   });
 
@@ -55,9 +91,29 @@ export default function User() {
     onData: (args) => {
       const targetUser = args.data.data.friendRequestAccepted;
       dispatch(changeFriendRequestAccepted({ targetUser }));
-      dispatch({ type: "QUERY_FRIEND_REQUESTS" });
+      dispatch({
+        type: "QUERY_FRIEND_REQUESTS",
+      });
       dispatch({ type: "QUERY_FRIENDS" });
-      dispatch({ type: "QUERY_CONVERSATIONS" });
+      dispatch({
+        type: "QUERY_CONVERSATIONS",
+      });
+    },
+  });
+
+  useSubscription(ADDED_TO_CONVERSATION, {
+    onData: () => {
+      dispatch({
+        type: "QUERY_CONVERSATIONS",
+      });
+    },
+  });
+
+  useSubscription(REMOVED_FROM_CONVERSATION, {
+    onData: () => {
+      dispatch({
+        type: "QUERY_CONVERSATIONS",
+      });
     },
   });
 
@@ -65,6 +121,19 @@ export default function User() {
     onData: () => {
       dispatch({ type: "QUERY_FRIENDS" });
       dispatch({ type: "QUERY_CONVERSATIONS" });
+    },
+  });
+
+  useSubscription(MESSAGES_SUBSCRIPTION, {
+    onData: (args) => {
+      const data = args.data.data;
+      const message = {
+        ...data.messageCreated,
+        content: data.messageCreated.text,
+      };
+      dispatch({ type: "QUERY_CONVERSATIONS" });
+      if (currentConversationId === message.conversationId)
+        dispatch(addMessage({ message }));
     },
   });
 

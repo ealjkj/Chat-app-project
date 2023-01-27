@@ -32,7 +32,10 @@ const AddToConversationList = ({ notInclude = [] }) => {
 
   useEffect(() => {
     if (hasFriends && friends.length === 0) {
-      dispatch({ type: "QUERY_FRIENDS", payload: { userId } });
+      dispatch({
+        type: "QUERY_FRIENDS",
+        payload: { fetchPolicy: "cache-first" },
+      });
     }
   }, []);
 

@@ -7,7 +7,6 @@ import {
   Divider,
   ListItemButton,
 } from "@mui/material";
-
 import { Link as RouterLink } from "react-router-dom";
 
 const ConversationItem = ({ conversation }) => {

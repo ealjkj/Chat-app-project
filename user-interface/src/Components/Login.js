@@ -29,10 +29,12 @@ const Login = () => {
   });
 
   const handleChange = (event) => {
-    setInputs((prevState) => ({
-      ...prevState,
-      [event.target.name]: event.target.value,
-    }));
+    if (event.target.value.length < 40) {
+      setInputs((prevState) => ({
+        ...prevState,
+        [event.target.name]: event.target.value,
+      }));
+    }
   };
 
   const handleSubmit = (event) => {
@@ -44,6 +46,8 @@ const Login = () => {
       },
     });
   };
+
+  const notBlank = Boolean(inputs.username) && Boolean(inputs.password);
 
   if (user) return <Navigate to="/user/dashboard" />;
 
@@ -65,6 +69,7 @@ const Login = () => {
             {t("login")}
           </Typography>
           <TextField
+            value={inputs.username}
             variant="outlined"
             label={t("username")}
             name="username"
@@ -72,6 +77,7 @@ const Login = () => {
           />
 
           <TextField
+            value={inputs.password}
             variant="outlined"
             label={t("password")}
             type="password"
@@ -79,7 +85,7 @@ const Login = () => {
             onChange={handleChange}
           />
 
-          <Button variant="contained" type="submit">
+          <Button variant="contained" type="submit" disabled={!notBlank}>
             {t("submit")}
           </Button>
           <Typography>

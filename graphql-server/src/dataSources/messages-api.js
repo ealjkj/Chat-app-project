@@ -22,6 +22,12 @@ class MessagesAPI extends RESTDataSource {
     return this.get(`/conversation/ofUser/${userId}`);
   }
 
+  async leaveConversation({ conversationId, userId }) {
+    return this.put("/conversation/leaveConversation/" + conversationId, {
+      userId,
+    });
+  }
+
   async removeParticipant({ conversationId, participantId }) {
     return this.put(`/conversation/removeUser/${conversationId}`, {
       body: { userId: participantId },
@@ -37,6 +43,10 @@ class MessagesAPI extends RESTDataSource {
     return this.post(`/message/create`, {
       body: message,
     });
+  }
+
+  async getMessages(conversationId) {
+    return this.get("/message/ofConversation/" + conversationId);
   }
 }
 

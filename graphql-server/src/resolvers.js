@@ -1,10 +1,6 @@
 const { GraphQLError } = require("graphql");
 const { PubSub, withFilter } = require("graphql-subscriptions");
-const axios = require("axios");
 const logger = require("./logger");
-const winston = require("winston/lib/winston/config");
-
-const MESSAGES_API = process.env.MESSAGES_API;
 
 const pubsub = new PubSub();
 
@@ -95,6 +91,11 @@ const resolvers = {
         isOneOnOne: false,
         admins: [conversationInput.creatorId],
       });
+
+      pubsub.publish("ADDED_TO_CONVERSATION", {
+        addedToConversation: conversation,
+      });
+
       return conversation;
     },
     addParticipants: async (
@@ -110,6 +111,10 @@ const resolvers = {
       await dataSources.messagesAPI.addParticipants({
         conversationId,
         participants,
+      });
+
+      pubsub.publish("ADDED_TO_CONVERSATION", {
+        addedToConversation: conversation,
       });
 
       return conversationId;
@@ -287,13 +292,16 @@ const resolvers = {
       }
     },
 
-    leaveConversation: async (parent, { myId, conversationId }) => {
-      await axios.put(
-        MESSAGES_API + "/conversation/leaveConversation/" + conversationId,
-        {
-          userId: myId,
-        }
-      );
+    leaveConversation: async (
+      parent,
+      { conversationId },
+      { user, dataSources }
+    ) => {
+      console.log("leaving conversation", conversationId, user.userId);
+      await dataSources.messagesAPI.leaveConversation({
+        conversationId,
+        userId: user.userId,
+      });
 
       return conversationId;
     },
@@ -313,6 +321,10 @@ const resolvers = {
         participantId,
       });
 
+      pubsub.publish(`REMOVED_FROM_CONVERSATION`, {
+        removedFromConversation: participantId,
+      });
+
       return conversationId;
     },
 
@@ -324,11 +336,17 @@ const resolvers = {
   Subscription: {
     messageCreated: {
       subscribe: withFilter(
-        (_, { conversationId }) => {
+        () => {
           return pubsub.asyncIterator(["MESSAGE_CREATED"]);
         },
-        ({ messageCreated }, { conversationId }, { user }) => {
-          return messageCreated.conversationId === conversationId;
+        async ({ messageCreated }, _, { user, dataSources }) => {
+          const conversation = await dataSources.messagesAPI.getConversation(
+            messageCreated.conversationId
+          );
+
+          return conversation.members.some(
+            (member) => member.userId === user.userId
+          );
         }
       ),
     },
@@ -358,7 +376,30 @@ const resolvers = {
         () => true
       ),
     },
+    addedToConversation: {
+      subscribe: withFilter(
+        () => {
+          return pubsub.asyncIterator(["ADDED_TO_CONVERSATION"]);
+        },
+        ({ addedToConversation }, _, { user }) => {
+          return addedToConversation.members.some(
+            (member) => member.userId === user.userId
+          );
+        }
+      ),
+    },
+    removedFromConversation: {
+      subscribe: withFilter(
+        () => {
+          return pubsub.asyncIterator(["REMOVED_FROM_CONVERSATION"]);
+        },
+        ({ removedFromConversation }, _, { user }) => {
+          return removedFromConversation === user.userId;
+        }
+      ),
+    },
   },
+
   Query: {
     user: async (parent, args, { dataSources, user, noTokenError }) => {
       if (noTokenError) throw noTokenError;
@@ -379,7 +420,7 @@ const resolvers = {
         conversationId
       );
 
-      const isMember = conversation.members.find(
+      const isMember = conversation.members.some(
         (member) => member.userId === user.userId
       );
 
@@ -390,12 +431,18 @@ const resolvers = {
     friends: async (parent, context, { user, dataSources }) => {
       return await dataSources.userAPI.getFriends(user.userId);
     },
-    messages: async (parent, { conversationId }) => {
-      const { data } = await axios.get(
-        MESSAGES_API + "/message/ofConversation/" + conversationId
+    messages: async (parent, { conversationId }, { user, dataSources }) => {
+      const conversation = await dataSources.messagesAPI.getConversation(
+        conversationId
       );
 
-      return data;
+      const isMember = conversation.members.some(
+        (member) => member.userId === user.userId
+      );
+
+      if (!isMember) throw GraphQLError("Not part of the conversation");
+
+      return await dataSources.messagesAPI.getMessages(conversationId);
     },
     conversations: async (_, __, { dataSources, user }) => {
       const { userId } = user;

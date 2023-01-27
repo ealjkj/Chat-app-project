@@ -31,12 +31,12 @@ async function run() {
 
   // Create App
   const app = express();
-  app.use(
-    expressWinston.logger({
-      winstonInstance: logger,
-      statusLevels: true,
-    })
-  );
+  // app.use(
+  //   expressWinston.logger({
+  //     winstonInstance: logger,
+  //     statusLevels: true,
+  //   })
+  // );
 
   const httpServer = createServer(app);
   const wsServer = new WebSocketServer({

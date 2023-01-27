@@ -119,8 +119,10 @@ type Query {
 }
 
 type Subscription {
-  messageCreated(conversationId: ID): Message
+  messageCreated: Message
   friendRequestSent(targetId: ID): User
   friendRequestAccepted(sourceId: ID): User
-  friendRemoved(friendId: ID): ID
+  friendRemoved: ID
+  addedToConversation: Conversation
+  removedFromConversation: ID
 }

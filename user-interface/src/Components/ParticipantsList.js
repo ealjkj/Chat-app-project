@@ -32,7 +32,10 @@ const ParticipantList = ({ participants }) => {
   });
 
   useEffect(() => {
-    dispatch({ type: "QUERY_FRIENDS", payload: { userId } });
+    dispatch({
+      type: "QUERY_FRIENDS",
+      payload: { fetchPolicy: "cache-first" },
+    });
   }, []);
 
   return (

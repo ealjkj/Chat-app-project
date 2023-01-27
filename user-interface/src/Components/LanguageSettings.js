@@ -60,9 +60,9 @@ export default function LanguageSettings() {
               value={languageOnSelect}
               onChange={handleChange}
             >
-              <MenuItem value={"en"}>{t("english")}</MenuItem>
-              <MenuItem value={"es"}>{t("spanish")}</MenuItem>
-              <MenuItem value={"fr"}>{t("french")}</MenuItem>
+              <MenuItem value={"en"}>{"English"}</MenuItem>
+              <MenuItem value={"es"}>{"Español"}</MenuItem>
+              <MenuItem value={"fr"}>{"Français "}</MenuItem>
             </Select>
           </FormControl>
         </Stack>

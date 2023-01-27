@@ -7,10 +7,11 @@ import { useParams } from "react-router-dom";
 import MessageItem from "./MessageItem";
 import TypingArea from "./TypingArea";
 import ConversationHeader from "./ConversationHeader";
-import { format } from "date-fns";
+import { dateDisplay } from "../utils/timeFormat";
 
 const MessagesSection = () => {
   const messages = useSelector((state) => state.messages);
+  const language = useSelector((state) => state.language);
   const [scrolled, setScrolled] = useState(true);
   const messagesEnd = useRef(null);
   const messagesSection = useRef(null);
@@ -37,12 +38,12 @@ const MessagesSection = () => {
       element.scrollHeight - element.scrollTop - element.clientHeight <= 5
     );
   };
+
   return (
     <Stack>
       <Paper
         sx={{
           position: "fixed",
-          // backgroundColor: "pink",
           width: "100%",
           zIndex: 1,
         }}
@@ -67,10 +68,13 @@ const MessagesSection = () => {
           const previousMessage = index !== 0 ? messages[index - 1] : null;
 
           const previousMessageDate = previousMessage
-            ? format(new Date(previousMessage.createdAt), "P")
+            ? dateDisplay(previousMessage.createdAt, { language })
             : null;
 
-          const currentMessageDate = format(new Date(message.createdAt), "P");
+          const currentMessageDate = dateDisplay(message.createdAt, {
+            language,
+          });
+
           const messageNode = (
             <MessageItem message={message} key={message._id} />
           );

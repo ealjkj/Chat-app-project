@@ -9,7 +9,10 @@ const FriendRequestsList = ({ maxHeight = "80vh" }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch({ type: "QUERY_FRIEND_REQUESTS" });
+    dispatch({
+      type: "QUERY_FRIEND_REQUESTS",
+      payload: { fetchPolicy: "cache-first" },
+    });
   }, []);
 
   return (

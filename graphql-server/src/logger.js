@@ -15,6 +15,7 @@ const logger = createLogger({
 
   format: format.combine(
     format.json(),
+    format.colorize(),
     format.timestamp(),
     format.metadata(),
     format.prettyPrint()

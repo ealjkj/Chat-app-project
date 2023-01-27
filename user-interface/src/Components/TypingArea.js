@@ -1,10 +1,4 @@
-import {
-  Stack,
-  TextField,
-  Typography,
-  Button,
-  IconButton,
-} from "@mui/material";
+import { Stack, TextField, IconButton } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,6 +17,7 @@ const TypingArea = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    if (messageText.length === 0) return;
     dispatch({
       type: "MUTATE_CREATE_MESSAGE",
       payload: { message: { from: userId, text: messageText, conversationId } },

@@ -22,9 +22,11 @@ const participantsToAddSlice = createSlice({
     removeParticipant(state, action) {
       return state.filter((element) => element._id !== action.payload.userId);
     },
+
+    reset: () => initialState,
   },
 });
 
-export const { addParticipant, removeParticipant } =
+export const { addParticipant, removeParticipant, reset } =
   participantsToAddSlice.actions;
 export default participantsToAddSlice.reducer;
