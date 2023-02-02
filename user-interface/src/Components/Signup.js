@@ -81,18 +81,6 @@ const Signup = () => {
     if (inputs[input] === "") hasBlankInput = true;
   }
 
-  const validSubmit =
-    !validations.firstName.error &&
-    !validations.lastName.error &&
-    !validations.username.error &&
-    !validations.password.error &&
-    !validations.passwordConfirm.error &&
-    !validations.email.error &&
-    !existence.username &&
-    !existence.email;
-
-  const disableButton = hasBlankInput || !validSubmit;
-
   const emailError = validations.email.error || existence.email;
   const emailHelperText = existence.email
     ? t("anotherAccountRegistered")
@@ -111,6 +99,17 @@ const Signup = () => {
     ? t("passwordsMustMatch")
     : validations.passwordConfirm.helperText;
 
+  const invalidSubmit =
+    validations.firstName.error ||
+    validations.lastName.error ||
+    usernameError ||
+    validations.password.error ||
+    passwordConfirmError ||
+    emailError ||
+    existence.username ||
+    existence.email;
+
+  const disableButton = hasBlankInput || invalidSubmit;
   return (
     <Box
       component="form"

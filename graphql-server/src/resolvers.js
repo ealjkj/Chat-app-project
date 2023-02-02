@@ -84,8 +84,25 @@ const resolvers = {
     createConversation: async (
       parent,
       { conversationInput },
-      { dataSources }
+      { user, dataSources }
     ) => {
+      const userIsPart = conversationInput.members.some(
+        (member) => member.userId !== user.userId
+      );
+
+      if (!userIsPart) {
+        throw new GraphQLError("USER_NOT_PART");
+      }
+
+      const { friends } = await dataSources.userAPI.getUser(user.userId);
+      const aMemberIsNotFriend = conversationInput.members.some(
+        (member) =>
+          !friends.includes(member.userId) && member.userId !== user.userId
+      );
+
+      if (aMemberIsNotFriend) {
+        throw new GraphQLError("INVALID_MEMBERS");
+      }
       const conversation = await dataSources.messagesAPI.createConversation({
         ...conversationInput,
         isOneOnOne: false,
@@ -121,7 +138,7 @@ const resolvers = {
     },
     createMessage: async (parent, { messageInput }, { user, dataSources }) => {
       const newMessage = {
-        from: messageInput.from,
+        from: user.userId,
         content: messageInput.text,
         conversationId: messageInput.conversationId,
       };
@@ -197,14 +214,8 @@ const resolvers = {
       return { success: true };
     },
 
-    sendFriendRequest: async (
-      parent,
-      { friendshipInput },
-      { user, dataSources }
-    ) => {
+    sendFriendRequest: async (parent, { friendId }, { user, dataSources }) => {
       try {
-        const { friendId } = friendshipInput;
-
         const friendRequest = {
           sourceId: user.userId,
           targetId: friendId,
@@ -297,7 +308,6 @@ const resolvers = {
       { conversationId },
       { user, dataSources }
     ) => {
-      console.log("leaving conversation", conversationId, user.userId);
       await dataSources.messagesAPI.leaveConversation({
         conversationId,
         userId: user.userId,

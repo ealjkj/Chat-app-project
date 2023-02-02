@@ -41,6 +41,7 @@ export default function DetailsModal() {
 
   const handleLeave = () => {
     dispatch({ type: "LEAVE_CONVERSATION", payload: { conversationId } });
+    dispatch(closeDetailsModal());
   };
 
   const handleAdd = () => {

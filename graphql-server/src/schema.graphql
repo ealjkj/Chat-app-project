@@ -97,7 +97,7 @@ type Mutation {
   logout: Response!
   createMessage(messageInput: MessageInput): Message!
   createConversation(conversationInput: ConversationInput): Conversation
-  sendFriendRequest(friendshipInput: FriendshipInput): ID
+  sendFriendRequest(friendId: ID): ID
   acceptFriend(friendId: ID): ID
   rejectFriend(friendId: ID): ID
   leaveConversation(myId: ID, conversationId: ID): ID

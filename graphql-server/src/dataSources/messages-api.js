@@ -24,7 +24,9 @@ class MessagesAPI extends RESTDataSource {
 
   async leaveConversation({ conversationId, userId }) {
     return this.put("/conversation/leaveConversation/" + conversationId, {
-      userId,
+      body: {
+        userId,
+      },
     });
   }
 

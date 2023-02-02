@@ -7,7 +7,8 @@ import { useEffect, useRef, useState } from "react";
 import { closeModal } from "../slices/modalOpen.slice";
 import { changeModalSearch } from "../slices/modalSearcher.slice";
 import { useTranslation } from "react-i18next";
-import { reset } from "../slices/participantsToAdd.slice";
+import { reset as resetChips } from "../slices/participantsToAdd.slice";
+import { closeExtraModal } from "../slices/extraParticipantsModalOpen.slice";
 
 export default function CreateConversationModal({
   existingConversation = null,
@@ -31,7 +32,7 @@ export default function CreateConversationModal({
 
     dispatch({ type: "CREATE_CONVERSATION", payload: { conversationInput } });
     dispatch(closeModal());
-    dispatch(reset());
+    dispatch(resetChips());
   };
 
   const handleAddParticipants = () => {
@@ -42,6 +43,8 @@ export default function CreateConversationModal({
         participants: participantsToAdd.map((user) => user._id),
       },
     });
+    dispatch(closeExtraModal());
+    dispatch(resetChips());
   };
   const handleChange = (event) => {
     dispatch(changeModalSearch({ value: event.target.value }));
@@ -56,7 +59,8 @@ export default function CreateConversationModal({
   const inputEl = useRef(null);
 
   useEffect(() => {
-    inputEl.current.focus();
+    if (inputEl.current) inputEl.current.focus();
+    return () => dispatch(resetChips());
   }, []);
 
   return (

@@ -299,15 +299,12 @@ export function* watchChangeConversation() {
 export function* sendFriendRequest(action) {
   const options = {
     mutation: gql`
-      mutation ($friendshipInput: FriendshipInput) {
-        sendFriendRequest(friendshipInput: $friendshipInput)
+      mutation ($friendId: ID) {
+        sendFriendRequest(friendId: $friendId)
       }
     `,
     variables: {
-      friendshipInput: {
-        myId: action.payload.myId,
-        friendId: action.payload.user._id,
-      },
+      friendId: action.payload.user._id,
     },
   };
 
@@ -331,8 +328,11 @@ export function* acceptFriend(action) {
     },
   };
   yield call(client.mutate, options);
-  yield put({ type: "QUERY_FRIENDS" });
-  yield put({ type: "QUERY_FRIEND_REQUESTS" });
+  yield all([
+    put({ type: "QUERY_FRIENDS" }),
+    put({ type: "QUERY_FRIEND_REQUESTS" }),
+    put({ type: "QUERY_CONVERSATIONS" }),
+  ]);
 }
 
 export function* watchAcceptFriend() {
@@ -403,9 +403,7 @@ export function* leaveConversation(action) {
     },
   };
   yield call(client.mutate, options);
-  yield put(
-    removeConversation({ conversationId: action.payload.conversationId })
-  );
+  yield put({ type: "QUERY_CONVERSATIONS" });
 }
 
 export function* watchLeaveConversation() {
@@ -709,7 +707,10 @@ export function* queryUnfriend(action) {
   };
   try {
     yield call(client.mutate, options);
-    yield put(removeFriend({ friendId }));
+    yield all([
+      put({ type: "QUERY_FRIENDS" }),
+      put({ type: "QUERY_CONVERSATIONS" }),
+    ]);
   } catch (error) {
     yield put(defaultErrorAlert());
   }

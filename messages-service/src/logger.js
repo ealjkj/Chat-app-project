@@ -13,11 +13,14 @@ const logger = createLogger({
     }),
   ],
 
+  // format: format.combine(
+  //   format.json(),
+  //   format.timestamp(),
+  //   format.metadata(),
+  //   format.prettyPrint()
+  // ),
   format: format.combine(
-    format.json(),
-    format.timestamp(),
-    format.metadata(),
-    format.prettyPrint()
+    format.printf(({ message, level, meta }) => `${level}: ${message}`)
   ),
 });
 
