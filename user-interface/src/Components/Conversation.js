@@ -45,7 +45,8 @@ const Conversation = () => {
     <Grid container>
       <Grid
         item
-        md={3}
+        xs={12}
+        sm={3}
         sx={{
           height: "calc( 100vh - 64px)",
         }}
@@ -66,7 +67,7 @@ const Conversation = () => {
         </Box>
       </Grid>
 
-      <Grid item md={9}>
+      <Grid item sm={9} xs={12}>
         {conversation ? <MessagesSection /> : <NullConversation />}
       </Grid>
 

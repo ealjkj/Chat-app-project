@@ -192,6 +192,7 @@ const resolvers = {
       try {
         const { token } = await dataSources.authAPI.login(userInput);
         res.cookie("token", token, {
+          maxAge: 1000 * 60 * 60 * 24,
           httpOnly: true,
           secure: true,
           sameSite: "none",
@@ -206,6 +207,7 @@ const resolvers = {
 
     logout: async (parent, args, { req, res }) => {
       res.clearCookie("token", {
+        maxAge: 1000 * 60 * 60 * 24,
         httpOnly: true,
         secure: true,
         sameSite: "none",
