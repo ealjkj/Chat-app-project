@@ -15,6 +15,9 @@ const UserSchema = new Schema({
     required: true,
     trim: true,
     minlength: 8,
+    validate: {
+      validator: (password) => !password.includes(" "),
+    },
   },
   userId: String,
 });

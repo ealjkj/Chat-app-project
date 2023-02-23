@@ -14,6 +14,10 @@ export default function ReceivedFriendRequest() {
   };
 
   const acceptFriend = () => {
+    console.log(
+      "Accepting friend. friendRequestReceived:",
+      friendRequestReceived
+    );
     dispatch({
       type: "ACCEPT_FRIEND",
       payload: { friend: friendRequestReceived },
@@ -21,6 +25,10 @@ export default function ReceivedFriendRequest() {
     closeSnackBar();
   };
   const rejectFriend = () => {
+    console.log(
+      "Rejecting friend friend. friendRequestReceived:",
+      friendRequestReceived
+    );
     dispatch({
       type: "REJECT_FRIEND",
       payload: { friend: friendRequestReceived },

@@ -29,6 +29,10 @@ export default function DetailsModal() {
 
   useEffect(() => {
     if (!conversation) dispatch(closeDetailsModal());
+
+    return () => {
+      dispatch(changeModalSearch({ value: "" }));
+    }; 
   }, [conversation, dispatch]);
 
   const handleChange = (event) => {

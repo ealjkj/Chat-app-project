@@ -67,7 +67,7 @@ const MESSAGES_SUBSCRIPTION = gql`
 
 export default function User() {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user);
+  const userId = useSelector((state) => state.user?._id);
   const search = useSelector((state) => state.searcher);
   const currentConversationId = useSelector(
     (state) => state.currentConversation
@@ -76,6 +76,10 @@ export default function User() {
   useSubscription(FRIEND_REQUEST_RECEIVED, {
     onData: (args) => {
       const sourceUser = args.data.data.friendRequestSent;
+      console.log(
+        "dispatching Source User for friendRequestReceived",
+        sourceUser
+      );
       dispatch(changeFriendRequestReceived({ sourceUser }));
       dispatch({
         type: "QUERY_FRIEND_REQUESTS",
@@ -137,7 +141,7 @@ export default function User() {
     },
   });
 
-  if (!user) {
+  if (!userId) {
     return <Navigate to="/login" />;
   }
 

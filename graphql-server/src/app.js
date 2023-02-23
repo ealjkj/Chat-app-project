@@ -5,6 +5,10 @@ const express = require("express");
 const {
   ApolloServerPluginDrainHttpServer,
 } = require("@apollo/server/plugin/drainHttpServer");
+const {
+  ApolloServerPluginLandingPageDisabled,
+} = require("@apollo/server/plugin/disabled");
+
 const { makeExecutableSchema } = require("@graphql-tools/schema");
 const { WebSocketServer } = require("ws");
 const { useServer } = require("graphql-ws/lib/use/ws");
@@ -74,6 +78,7 @@ async function run() {
   const server = new ApolloServer({
     schema,
     plugins: [
+      ApolloServerPluginLandingPageDisabled(),
       ApolloServerPluginDrainHttpServer({ httpServer }),
       {
         async serverWillStart() {

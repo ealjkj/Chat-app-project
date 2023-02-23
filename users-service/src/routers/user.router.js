@@ -200,7 +200,13 @@ router.post("/friend", async (req, res) => {
     }
 
     if (target.friends.includes(sourceId)) {
-      return res.status(200).send({ message: "Already Friends" });
+      return res.status(400).send({ message: "Already Friends" });
+    }
+
+    if (!target.friendRequests.includes(sourceId)) {
+      return res
+        .status(400)
+        .send({ message: "This user did not send you a friend request" });
     }
 
     source.friends.push(targetId);

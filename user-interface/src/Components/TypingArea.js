@@ -20,7 +20,7 @@ const TypingArea = () => {
     if (messageText.length === 0) return;
     dispatch({
       type: "MUTATE_CREATE_MESSAGE",
-      payload: { message: { from: userId, text: messageText, conversationId } },
+      payload: { message: { text: messageText, conversationId } },
     });
     setMessage("");
   };

@@ -31,7 +31,7 @@ import { removeParticipant } from "./slices/participantsToAdd.slice";
 import { changeMessages as changeMessagesCurrentConversation } from "./slices/currentConversation.slice";
 import { changeLoading } from "./slices/loading.slice";
 import { editExistence } from "./slices/existence.slice";
-import { removeFriend } from "./slices/friends.slice";
+import { changeLogged } from "./slices/logged.slice";
 
 export function* login(action) {
   const options = {
@@ -69,6 +69,7 @@ export function* login(action) {
     const user = res.data.login;
 
     yield put(changeUser({ user }));
+    yield put(changeLogged({ logged: true }));
 
     yield put(
       changeLanguage({ language: user?.settings?.language || i18next.language })
@@ -551,7 +552,6 @@ export function* queryUser(action) {
           email
           friends
           conversations
-          token
           avatar
           settings {
             language
@@ -571,6 +571,7 @@ export function* queryUser(action) {
     const res = yield call(client.query, options);
     const user = res.data.user;
     yield put(changeUser({ user }));
+    yield put(changeLogged({ logged: true }));
     const language = user?.settings?.language || i18next.language;
     yield put(changeLanguage({ language }));
     yield call(i18next.changeLanguage, language);

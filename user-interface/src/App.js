@@ -19,7 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 function App() {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user);
+  const logged = useSelector((state) => state.logged);
   const isLoading = useSelector((state) => state.loading);
   useEffect(() => {
     dispatch({ type: "QUERY_USER" });
@@ -52,7 +52,11 @@ function App() {
             exact
             path="*"
             element={
-              user ? <Navigate to="user/dashboard" /> : <Navigate to="/login" />
+              logged ? (
+                <Navigate to="user/dashboard" />
+              ) : (
+                <Navigate to="/login" />
+              )
             }
           />
         </Routes>

@@ -8,7 +8,6 @@ type Message {
 }
 
 input MessageInput {
-  from: ID!
   text: String!
   conversationId: ID
 }
@@ -27,13 +26,22 @@ type User {
   username: String!
   firstName: String
   lastName: String
-  password: String!
-  passwordConfirm: String
+  email: String
+  description: String
+  avatar: String
+  requestSent: Boolean
+  joinedAt: String
+}
+
+type MainUser {
+  _id: ID
+  username: String!
+  firstName: String
+  lastName: String
   email: String
   friends: [ID]
   friendRequests: [User]
   conversations: [ID]
-  token: String
   description: String
   avatar: String
   requestSent: Boolean
@@ -58,8 +66,6 @@ type Conversation {
 }
 
 input ConversationInput {
-  _id: ID
-  creatorId: ID
   title: String
   members: [MemberInput]
   avatars: [String]
@@ -74,7 +80,6 @@ input UserInput {
   passwordConfirm: String
   email: String
   description: String
-  avatar: String
 }
 
 input MemberInput {
@@ -92,7 +97,7 @@ type Existence {
 }
 
 type Mutation {
-  login(userInput: UserInput): User!
+  login(userInput: UserInput): MainUser!
   createUser(userInput: UserInput): Response!
   logout: Response!
   createMessage(messageInput: MessageInput): Message!
@@ -108,7 +113,7 @@ type Mutation {
 }
 
 type Query {
-  user: User!
+  user: MainUser!
   friendRequests: [User]
   friends: [User]
   conversations: [Conversation]

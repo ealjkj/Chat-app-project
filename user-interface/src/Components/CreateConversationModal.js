@@ -23,7 +23,6 @@ export default function CreateConversationModal({
 
   const handleCreation = () => {
     const conversationInput = {
-      creatorId,
       title: conversationTitle,
       members: participantsToAdd
         .map((participant) => ({ userId: participant._id }))

@@ -3,3 +3,5 @@ error: 404: Not Found
 error: 404: Not Found
 error: 404: Not Found
 error: Cannot read properties of null (reading 'userId')
+error: HTTP POST /graphql
+error: HTTP POST /graphql

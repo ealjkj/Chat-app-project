@@ -1,7 +1,7 @@
 const { GraphQLError } = require("graphql");
 const { PubSub, withFilter } = require("graphql-subscriptions");
 const logger = require("./logger");
-
+const { removeDuplicates } = require("./utils");
 const pubsub = new PubSub();
 
 const resolvers = {
@@ -14,12 +14,6 @@ const resolvers = {
     text: (parent) => {
       if (!parent.text) return parent.content;
       return parent.text;
-    },
-  },
-
-  User: {
-    username: async (parent, args, context) => {
-      return parent.username;
     },
   },
 
@@ -57,13 +51,22 @@ const resolvers = {
       );
       if (parent.title) return parent.title;
 
+      const me = members.find((member) => member._id === user.userId);
+
       const title = members
-        .filter((member) => member._id != user.userId)
-        .filter((member, index) => index <= 3)
+        .filter((member) => member._id !== user.userId)
+        .filter((member, index) => index <= 1)
         .map((member) => member.firstName + " " + member.lastName)
         .join(", ");
 
-      return title;
+      if (parent.isOneOnOne) return title;
+
+      if (members.length === 1) return `${me.firstName} ${me.lastName}`;
+
+      if (members.length > 3)
+        return `${title}, ${me.firstName} ${me.lastName}, ...`;
+
+      return `${title}, ${me.firstName} ${me.lastName}`;
     },
 
     lastMessage: async (parent) => {
@@ -87,7 +90,7 @@ const resolvers = {
       { user, dataSources }
     ) => {
       const userIsPart = conversationInput.members.some(
-        (member) => member.userId !== user.userId
+        (member) => member.userId === user.userId
       );
 
       if (!userIsPart) {
@@ -105,8 +108,9 @@ const resolvers = {
       }
       const conversation = await dataSources.messagesAPI.createConversation({
         ...conversationInput,
+        members: removeDuplicates(conversationInput.members),
         isOneOnOne: false,
-        admins: [conversationInput.creatorId],
+        admins: [user.userId],
       });
 
       pubsub.publish("ADDED_TO_CONVERSATION", {
@@ -125,9 +129,15 @@ const resolvers = {
       );
       if (!conversation.admins.includes(user.userId)) return;
 
+      const { friends } = await dataSources.userAPI.getUser(user.userId);
+      const aParticipantIsNotFriend = participants.some(
+        (participant) => !friends.includes(participant)
+      );
+      if (aParticipantIsNotFriend) return;
+
       await dataSources.messagesAPI.addParticipants({
         conversationId,
-        participants,
+        participants: Array.from(new Set(participants)),
       });
 
       pubsub.publish("ADDED_TO_CONVERSATION", {
@@ -152,7 +162,7 @@ const resolvers = {
 
       pubsub.publish("MESSAGE_CREATED", { messageCreated });
 
-      return messageInput;
+      return messageCreated;
     },
 
     createUser: async (parent, { userInput }, { dataSources }) => {
@@ -176,10 +186,11 @@ const resolvers = {
       } catch (error) {
         if (
           error.extensions &&
-          error?.extensions.response.body.code === 11000
+          error?.extensions.response.body.message.slice(1, 6) === "11000"
         ) {
-          throw new Error(`User ${user.username} has already been taken`);
+          throw new Error(`User or email has already been taken`);
         }
+
         throw new Error(
           "Something went wrong, please try again in a few minutes"
         );
