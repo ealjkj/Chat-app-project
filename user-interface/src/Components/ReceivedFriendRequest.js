@@ -14,21 +14,15 @@ export default function ReceivedFriendRequest() {
   };
 
   const acceptFriend = () => {
-    console.log(
-      "Accepting friend. friendRequestReceived:",
-      friendRequestReceived
-    );
-    dispatch({
-      type: "ACCEPT_FRIEND",
-      payload: { friend: friendRequestReceived },
-    });
+    if (friendRequestReceived) {
+      dispatch({
+        type: "ACCEPT_FRIEND",
+        payload: { friend: friendRequestReceived },
+      });
+    }
     closeSnackBar();
   };
   const rejectFriend = () => {
-    console.log(
-      "Rejecting friend friend. friendRequestReceived:",
-      friendRequestReceived
-    );
     dispatch({
       type: "REJECT_FRIEND",
       payload: { friend: friendRequestReceived },

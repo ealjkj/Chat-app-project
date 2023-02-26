@@ -109,7 +109,7 @@ router.post("/create", async (req, res) => {
   }
 });
 
-router.delete("/delete/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   const { id } = req.params;
   try {
     const user = await User.findById(id);
@@ -118,7 +118,7 @@ router.delete("/delete/:id", async (req, res) => {
       return res.status(404).send({ message: "User not Found" });
     }
 
-    user.remove();
+    await user.remove();
     res.send(user);
   } catch (error) {
     logger.error(error);

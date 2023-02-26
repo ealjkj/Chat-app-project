@@ -59,7 +59,10 @@ export default function CreateConversationModal({
 
   useEffect(() => {
     if (inputEl.current) inputEl.current.focus();
-    return () => dispatch(resetChips());
+    return () => {
+      dispatch(changeModalSearch({ value: "" }));
+      dispatch(resetChips());
+    };
   }, []);
 
   return (

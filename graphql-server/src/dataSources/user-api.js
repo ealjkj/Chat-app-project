@@ -23,6 +23,10 @@ class UserAPI extends RESTDataSource {
     return this.post(`/user/create`, { body: user });
   }
 
+  async deleteUser(userId) {
+    return this.delete(`/user/${userId}`);
+  }
+
   async sendFriendRequest({ sourceId, targetId }) {
     return this.post(`/user/friendRequest`, {
       body: {

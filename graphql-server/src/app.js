@@ -77,6 +77,7 @@ async function run() {
 
   const server = new ApolloServer({
     schema,
+    introspection: false,
     plugins: [
       ApolloServerPluginLandingPageDisabled(),
       ApolloServerPluginDrainHttpServer({ httpServer }),

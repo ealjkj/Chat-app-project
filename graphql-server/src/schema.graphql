@@ -9,7 +9,7 @@ type Message {
 
 input MessageInput {
   text: String!
-  conversationId: ID
+  conversationId: ID!
 }
 
 type Settings {
@@ -67,23 +67,25 @@ type Conversation {
 
 input ConversationInput {
   title: String
-  members: [MemberInput]
-  avatars: [String]
-  message: String
+  members: [MemberInput]!
 }
 
 input UserInput {
   username: String!
-  firstName: String
-  lastName: String
+  firstName: String!
+  lastName: String!
   password: String!
-  passwordConfirm: String
-  email: String
-  description: String
+  passwordConfirm: String!
+  email: String!
+}
+
+input AuthInput {
+  username: String!
+  password: String!
 }
 
 input MemberInput {
-  userId: String
+  userId: String!
 }
 
 input FriendshipInput {
@@ -97,7 +99,7 @@ type Existence {
 }
 
 type Mutation {
-  login(userInput: UserInput): MainUser!
+  login(userInput: AuthInput): MainUser!
   createUser(userInput: UserInput): Response!
   logout: Response!
   createMessage(messageInput: MessageInput): Message!

@@ -76,10 +76,6 @@ export default function User() {
   useSubscription(FRIEND_REQUEST_RECEIVED, {
     onData: (args) => {
       const sourceUser = args.data.data.friendRequestSent;
-      console.log(
-        "dispatching Source User for friendRequestReceived",
-        sourceUser
-      );
       dispatch(changeFriendRequestReceived({ sourceUser }));
       dispatch({
         type: "QUERY_FRIEND_REQUESTS",

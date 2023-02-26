@@ -20,7 +20,6 @@ import { changeSigned } from "./slices/signed.slice";
 import { changeFriends } from "./slices/friends.slice";
 import {
   changeConversations,
-  removeConversation,
   addConversation,
   removeParticipant as removeParticipantConv,
 } from "./slices/conversations.slice";
@@ -36,7 +35,7 @@ import { changeLogged } from "./slices/logged.slice";
 export function* login(action) {
   const options = {
     mutation: gql`
-      mutation ($userInput: UserInput) {
+      mutation ($userInput: AuthInput) {
         login(userInput: $userInput) {
           _id
           username

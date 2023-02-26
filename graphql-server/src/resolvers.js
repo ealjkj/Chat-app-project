@@ -167,6 +167,7 @@ const resolvers = {
 
     createUser: async (parent, { userInput }, { dataSources }) => {
       const { password, passwordConfirm, ...user } = userInput;
+      let userRes = null;
 
       try {
         if (password !== passwordConfirm) {
@@ -176,7 +177,8 @@ const resolvers = {
         if (password.length > 20) {
           throw new GraphQLError("Password is longer than 20 characters");
         }
-        const userRes = await dataSources.userAPI.createUser(user);
+
+        userRes = await dataSources.userAPI.createUser(user);
 
         await dataSources.authAPI.signup({
           username: user.username,
@@ -184,9 +186,12 @@ const resolvers = {
           userId: userRes._id,
         });
       } catch (error) {
+        // In case of error, revert any user creation
+        if (userRes) await dataSources.userAPI.deleteUser(userRes._id);
+
         if (
           error.extensions &&
-          error?.extensions.response.body.message.slice(1, 6) === "11000"
+          error?.extensions?.response?.body?.message.slice(1, 6) === "11000"
         ) {
           throw new Error(`User or email has already been taken`);
         }
@@ -352,6 +357,10 @@ const resolvers = {
     },
 
     changeLanguage: async (parent, { language }, { user, dataSources }) => {
+      const validLanguages = ["en", "es", "fr"];
+      if (!validLanguages.includes(language))
+        throw new GraphQLError("Invalid language");
+
       await dataSources.userAPI.editSettings(user.userId, { language });
       return language;
     },

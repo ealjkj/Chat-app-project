@@ -162,3 +162,4 @@ warn: HTTP GET /graphql
 warn: HTTP GET /graphql
 warn: HTTP GET /graphql
 warn: HTTP GET /graphql
+warn: HTTP POST /graphql
